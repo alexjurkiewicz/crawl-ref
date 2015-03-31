@@ -102,6 +102,8 @@ static const armour_def Armour_prop[] =
         ARMF_REGENERATION, 50
     ),
 
+    DRAGON_ARMOUR(WIND,        "wind",                    4,   0,
+        SPARM_RUNNING),
     DRAGON_ARMOUR(STEAM,       "steam",                   5,   0,
         ARMF_RES_STEAM),
     DRAGON_ARMOUR(MOTTLED,     "mottled",                 6,  -50,
@@ -1162,6 +1164,7 @@ static map<monster_type, armour_type> _monster_hides = {
     { MONS_PEARL_DRAGON,        ARM_PEARL_DRAGON_HIDE },
     { MONS_SHADOW_DRAGON,       ARM_SHADOW_DRAGON_HIDE },
     { MONS_QUICKSILVER_DRAGON,  ARM_QUICKSILVER_DRAGON_HIDE },
+    { MONS_WIND_DRAGON,         ARM_WIND_DRAGON_HIDE },
 };
 
 /**
@@ -1194,6 +1197,7 @@ static map<armour_type, armour_type> _hide_armours = {
     { ARM_PEARL_DRAGON_HIDE,        ARM_PEARL_DRAGON_ARMOUR },
     { ARM_SHADOW_DRAGON_HIDE,       ARM_SHADOW_DRAGON_ARMOUR },
     { ARM_QUICKSILVER_DRAGON_HIDE,  ARM_QUICKSILVER_DRAGON_ARMOUR },
+    { ARM_WIND_DRAGON_HIDE,         ARM_WIND_DRAGON_ARMOUR },
 };
 
 /**

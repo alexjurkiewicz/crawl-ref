@@ -1617,6 +1617,18 @@ A long plaited strip of leather. Originally developed for use in disagreements
 with cattle, this simple weapon is now widely used to settle differences
 between all sorts of creatures.
 %%%%
+%%%
+wind dragon armour
+
+Armour made from the scales of a wind dragon. Extremely light, this armour
+provides its wearer with a noticable increase in movement speed.
+%%%%
+wind dragon hide
+
+The sleek hide of a quicksilver dragon. In this raw form a wearer will notice
+increased movement speed. With magical enchantment its resilience can be
+substantially improved.
+%%%%
 young poisoner's handbook
 
 A introductory book for the magic arts of poison.

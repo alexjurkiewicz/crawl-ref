@@ -1292,12 +1292,14 @@ unsigned int item_value(item_def item, bool ident)
         case ARM_FIRE_DRAGON_ARMOUR:
         case ARM_ICE_DRAGON_ARMOUR:
         case ARM_QUICKSILVER_DRAGON_ARMOUR:
+        case ARM_WIND_DRAGON_ARMOUR:
             valued += 600;
             break;
 
         case ARM_FIRE_DRAGON_HIDE:
         case ARM_ICE_DRAGON_HIDE:
         case ARM_QUICKSILVER_DRAGON_HIDE:
+        case ARM_WIND_DRAGON_HIDE:
         case ARM_SWAMP_DRAGON_ARMOUR:
             valued += 500;
             break;

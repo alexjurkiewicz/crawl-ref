@@ -1077,7 +1077,7 @@ static armour_type _get_random_armour_type(int item_level)
     }
     else if (x_chance_in_y(11 + item_level, 10000))
     {
-        // High level dragon armours/hides (14 entries)
+        // High level dragon armours/hides (16 entries)
         armtype = random_choose(ARM_STEAM_DRAGON_HIDE,
                                 ARM_STEAM_DRAGON_ARMOUR,
                                 ARM_MOTTLED_DRAGON_HIDE,
@@ -1093,7 +1093,9 @@ static armour_type _get_random_armour_type(int item_level)
                                 ARM_SHADOW_DRAGON_HIDE,
                                 ARM_SHADOW_DRAGON_ARMOUR,
                                 ARM_QUICKSILVER_DRAGON_HIDE,
-                                ARM_QUICKSILVER_DRAGON_ARMOUR);
+                                ARM_QUICKSILVER_DRAGON_ARMOUR,
+                                ARM_WIND_DRAGON_HIDE,
+                                ARM_WIND_DRAGON_ARMOUR);
     }
     else if (x_chance_in_y(11 + item_level, 8000))
     {
