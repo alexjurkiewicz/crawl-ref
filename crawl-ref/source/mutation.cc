@@ -2385,12 +2385,12 @@ int handle_pbd_corpses()
     {
         for (stack_iterator j(*ri); j; ++j)
         {
-            if (j->is_type(OBJ_CORPSES, CORPSE_BODY))
-            {
+            if (you_worship(GOD_GOZAG) && j->base_type == OBJ_GOLD)
                 ++corpse_count;
-                if (corpse_count == 7)
-                    break;
-            }
+            else if (j->is_type(OBJ_CORPSES, CORPSE_BODY))
+                ++corpse_count;
+            if (corpse_count == 7)
+                break;
         }
     }
 

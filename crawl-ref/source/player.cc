@@ -1121,10 +1121,8 @@ static int _player_bonus_regen()
     // a mutation_level * 3 (3/6/9) radius, to a maximum of 7
     // corpses. If and only if the duration of the effect is
     // still active.
-    // Gozag worshippers don't get corpses, of course, so they always
-    // get the effect at minimal power.
     if (you.duration[DUR_POWERED_BY_DEATH])
-        rr += (you_worship(GOD_GOZAG) ? handle_pbd_corpses() : 1)* 100;
+        rr += handle_pbd_corpses() * 100;
 
     return rr;
 }
