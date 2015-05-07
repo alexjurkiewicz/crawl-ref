@@ -396,37 +396,31 @@ static void _give_experience(int player_exp, int monster_exp,
 }
 
 /**
- * Turn a given corpse into gold. Praise Gozag!
+ * Find the gold value of a corpse. Praise Gozag!
  *
- * Gold is random, but correlates weakly with monster mass.
+ * Value is random, but correlates weakly with monster mass.
  *
- * Also sets the gold distraction timer on the player.
- *
- * @param corpse        The corpse item to be Midasified.
+ * @param corpse        The corpse to be appraised.
+ * @return int          The value of the corpse.
  */
-void goldify_corpse(item_def &corpse)
+const int corpse_value(item_def &corpse)
 {
-    int base_gold = 7;
+    int value = 7;
     // monsters with more chunks than SIZE_MEDIUM give more than base gold
     const int extra_chunks = (max_corpse_chunks(corpse.mon_type)
                               - max_corpse_chunks(MONS_HUMAN)) * 2;
     if (extra_chunks > 0)
-        base_gold += extra_chunks;
+        value += extra_chunks;
 
-    corpse.clear();
-    corpse.base_type = OBJ_GOLD;
-    corpse.quantity = base_gold / 2 + random2avg(base_gold, 2);
-    item_colour(corpse);
+    value = value / 2 + random2avg(value, 2);
+    dprf("Corpse value is %d", value);
+    return value;
 }
 
 // Returns the item slot of a generated corpse, or -1 if no corpse.
-int place_monster_corpse(const monster* mons, bool silent, bool force)
+int place_monster_corpse(const monster* mons, bool silent, bool good_kill,
+                         bool force)
 {
-    // Under Gozag, monsters turn into gold on death.
-    bool goldify = in_good_standing(GOD_GOZAG)
-                   && !mons_class_flag(mons->type, M_NO_EXP_GAIN)
-                   && !mons_is_conjured(mons->type);
-
     // The game can attempt to place a corpse for an out-of-bounds monster
     // if a shifter turns into a giant spore and explodes. In this
     // case we place no corpse since the explosion means anything left
@@ -442,17 +436,31 @@ int place_monster_corpse(const monster* mons, bool silent, bool force)
     if (mons->props.exists(NEVER_CORPSE_KEY))
         return -1;
 
+    // Generate the corpse.
     item_def corpse;
-    // Corpseless monsters still drop gold for Gozag.
     const monster_type corpse_class = fill_out_corpse(mons, mons->type,
-                                                      corpse, goldify);
+                                                      corpse);
+
+    // Gozag's gold on kill -- depends on corpse size
+    if (in_good_standing(GOD_GOZAG) && good_kill)
+    {
+        // You get gold even for corpseless monsters
+        if (corpse_class == MONS_NO_MONSTER)
+        {
+            item_def fakecorpse;
+            fill_out_corpse(mons, mons->type, corpse, true);
+            get_gold(fakecorpse, corpse_value(fakecorpse), false);
+        } else {
+            get_gold(corpse, corpse_value(corpse), false);
+        }
+    }
 
     if (corpse_class == MONS_NO_MONSTER)
         return -1;
 
     // Don't place a corpse? If a zombified monster is somehow capable
     // of leaving a corpse, then always place it.
-    if (mons_class_is_zombified(mons->type) && !goldify)
+    if (mons_class_is_zombified(mons->type))
         force = true;
 
     const bool vault_forced =
@@ -464,20 +472,8 @@ int place_monster_corpse(const monster* mons, bool silent, bool force)
 
     // 50/50 chance of getting a corpse, unless it's forced by the caller or
     // the monster's flags.
-    // Gozag always gets a "corpse".
-    if (!force && !vault_forced && !goldify && coinflip())
+    if (!force && !vault_forced && coinflip())
         return -1;
-
-    if (!force && goldify)
-    {
-        goldify_corpse(corpse);
-        // If gold would be destroyed, give it directly to the player instead.
-        if (feat_virtually_destroys_item(grd(mons->pos()), corpse))
-        {
-            get_gold(corpse, corpse.quantity, false);
-            return -1;
-        }
-    }
 
     int o = get_mitm_slot();
 
@@ -2554,7 +2550,7 @@ int monster_die(monster* mons, killer_type killer,
             corpse2 = mounted_kill(mons, MONS_WASP, killer, killer_index);
             mons->type = MONS_SPRIGGAN;
         }
-        corpse = place_monster_corpse(mons, silent);
+        corpse = place_monster_corpse(mons, silent, good_kill);
         if (corpse == -1)
             corpse = corpse2;
     }

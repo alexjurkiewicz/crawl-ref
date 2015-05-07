@@ -728,9 +728,6 @@ static void _place_player_corpse(bool explode)
     if (fill_out_corpse(0, player_mons(false), corpse) == MONS_NO_MONSTER)
         return;
 
-    if (in_good_standing(GOD_GOZAG))
-        goldify_corpse(corpse);
-
     if (explode && explode_corpse(corpse, you.pos()))
         return;
 

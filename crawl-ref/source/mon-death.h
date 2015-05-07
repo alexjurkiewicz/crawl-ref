@@ -43,10 +43,9 @@ monster_type fill_out_corpse(const monster* mons,
                              item_def& corpse,
                              bool force_corpse = false);
 
-void goldify_corpse(item_def &corpse);
 bool explode_corpse(item_def& corpse, const coord_def& where);
 
-int place_monster_corpse(const monster* mons, bool silent, bool force = false);
+int place_monster_corpse(const monster* mons, bool silent, bool good_kill = true, bool force = false);
 void monster_cleanup(monster* mons);
 void setup_spore_explosion(bolt & beam, const monster& origin);
 void record_monster_defeat(monster* mons, killer_type killer);
