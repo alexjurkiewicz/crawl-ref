@@ -576,11 +576,6 @@ in melee will be halved, your spellcasting power will be greatly hampered, and
 your skills will be further drained when taking damage.
 %%%%
 # Gozag
-Potion Petition ability
-
-Petition Gozag to sell you the effects of a set of potions. Gozag will offer
-three lists at a time, with varying prices.
-%%%%
 Call Merchant ability
 
 Through Gozag, send funds to a merchant to help them set up shop in the

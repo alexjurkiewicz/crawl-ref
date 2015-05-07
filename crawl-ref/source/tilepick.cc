@@ -5420,8 +5420,6 @@ tileidx_t tileidx_ability(const ability_type ability)
     case ABIL_DITHMENOS_SHADOW_FORM:
         return TILEG_ABILITY_DITHMENOS_SHADOW_FORM;
     // Gozag
-    case ABIL_GOZAG_POTION_PETITION:
-        return TILEG_ABILITY_GOZAG_POTION_PETITION;
     case ABIL_GOZAG_CALL_MERCHANT:
         return TILEG_ABILITY_GOZAG_CALL_MERCHANT;
     case ABIL_GOZAG_BRIBE_BRANCH:

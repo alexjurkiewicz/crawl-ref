@@ -19,20 +19,15 @@
 #define PURITY_SAC_KEY "current_purity_sacrifice"
 #define ARCANA_SAC_KEY "current_arcane_sacrifices"
 
-const char * const GOZAG_POTIONS_KEY = "gozag_potions%d";
-const char * const GOZAG_PRICE_KEY = "gozag_price%d";
-
 const char * const GOZAG_SHOPKEEPER_NAME_KEY = "gozag_shopkeeper_%d";
 const char * const GOZAG_SHOP_TYPE_KEY       = "gozag_shop_type_%d";
 const char * const GOZAG_SHOP_SUFFIX_KEY     = "gozag_shop_suffix_%d";
 const char * const GOZAG_SHOP_COST_KEY       = "gozag_shop_cost_%d";
 
-#define GOZAG_POTION_PETITION_AMOUNT 400
 #define GOZAG_SHOP_BASE_MULTIPLIER 100
 #define GOZAG_SHOP_MOD_MULTIPLIER 25
 #define GOZAG_BRIBE_AMOUNT 3000
 #define GOZAG_MAX_BRIBABILITY 8
-#define GOZAG_MAX_POTIONS 3
 
 #define RU_SAC_XP_LEVELS 2
 
@@ -125,9 +120,6 @@ void dithmenos_shadow_melee(actor* target);
 void dithmenos_shadow_throw(coord_def target, const item_def &item);
 void dithmenos_shadow_spell(bolt* orig_beam, spell_type spell);
 
-int gozag_potion_price();
-bool gozag_setup_potion_petition(bool quiet = false);
-bool gozag_potion_petition();
 int gozag_price_for_shop(bool max = false);
 bool gozag_setup_call_merchant(bool quiet = false);
 bool gozag_call_merchant(bool gift = false);

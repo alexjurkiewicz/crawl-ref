@@ -298,8 +298,7 @@ enum ability_type
     ABIL_DITHMENOS_SHADOW_STEP = 1170,
     ABIL_DITHMENOS_SHADOW_FORM,
     // Gozag
-    ABIL_GOZAG_POTION_PETITION = 1180,
-    ABIL_GOZAG_CALL_MERCHANT,
+    ABIL_GOZAG_CALL_MERCHANT = 1180,
     ABIL_GOZAG_BRIBE_BRANCH,
     // Qazlal
     ABIL_QAZLAL_UPHEAVAL = 1190,
@@ -470,9 +469,6 @@ enum attribute_type
     ATTR_GOD_WRATH_COUNT,      // Number of stored retributions
     ATTR_NEXT_DRAGON_TIME,     // aut remaining until Dragon's Call summons another
     ATTR_GOLD_GENERATED,       // Count gold generated this game.
-#if TAG_MAJOR_VERSION == 34
-    ATTR_GOZAG_POTIONS,        // Number of times you've bought potions from Gozag.
-#endif
     ATTR_GOZAG_SHOPS,          // Number of shops you've funded from Gozag.
     ATTR_GOZAG_SHOPS_CURRENT,  // As above, but since most recent time worshipping.
 #if TAG_MAJOR_VERSION == 34
@@ -484,7 +480,6 @@ enum attribute_type
     ATTR_GOZAG_GOLD_USED,      // Gold spent for Gozag abilities.
     ATTR_BONE_ARMOUR,          // Current amount of boney armour (from the spell)
     ATTR_LAST_FLIGHT_STATUS,   // Whether spawm_flight should be restored after form change
-    ATTR_GOZAG_FIRST_POTION,   // Gozag's free first usage of Potion Petition.
     ATTR_STAT_LOSS_XP,         // Unmodified XP needed for stat recovery.
     NUM_ATTRIBUTES
 };
@@ -4768,7 +4763,6 @@ enum uncancellable_type
     UNC_DRAW_THREE,            // arg is inv slot of the deck
     UNC_STACK_FIVE,            // arg is inv slot of the deck
     UNC_MERCENARY,             // arg is mid of the monster
-    UNC_POTION_PETITION,       // arg is ignored
     UNC_CALL_MERCHANT,         // arg is ignored
 };
 

@@ -186,7 +186,7 @@ ability_type god_abilities[NUM_GODS][MAX_GOD_ABILITIES] =
     { ABIL_NON_ABILITY, ABIL_DITHMENOS_SHADOW_STEP, ABIL_NON_ABILITY,
       ABIL_NON_ABILITY, ABIL_DITHMENOS_SHADOW_FORM },
     // Gozag
-    { ABIL_GOZAG_POTION_PETITION, ABIL_GOZAG_CALL_MERCHANT,
+    { ABIL_GOZAG_CALL_MERCHANT,
       ABIL_GOZAG_BRIBE_BRANCH, ABIL_NON_ABILITY, ABIL_NON_ABILITY },
     // Qazlal
     { ABIL_NON_ABILITY, ABIL_QAZLAL_UPHEAVAL, ABIL_QAZLAL_ELEMENTAL_FORCE,
@@ -448,8 +448,6 @@ static const ability_def Ability_List[] =
       0, 0, 0, 0, 0, ABFLAG_NONE },
 
     // Gozag
-    { ABIL_GOZAG_POTION_PETITION, "Potion Petition",
-      0, 0, 0, 0, 0, ABFLAG_GOLD },
     { ABIL_GOZAG_CALL_MERCHANT, "Call Merchant",
       0, 0, 0, 0, 0, ABFLAG_GOLD },
     { ABIL_GOZAG_BRIBE_BRANCH, "Bribe Branch",
@@ -724,8 +722,6 @@ int get_gold_cost(ability_type ability)
     {
     case ABIL_GOZAG_CALL_MERCHANT:
         return gozag_price_for_shop(true);
-    case ABIL_GOZAG_POTION_PETITION:
-        return gozag_potion_price();
     case ABIL_GOZAG_BRIBE_BRANCH:
         return GOZAG_BRIBE_AMOUNT;
     default:
@@ -797,8 +793,6 @@ const string make_cost_description(ability_type ability)
         const int amount = get_gold_cost(ability);
         if (amount)
             ret += make_stringf(", %d Gold", amount);
-        else if (ability == ABIL_GOZAG_POTION_PETITION)
-            ret += ", Free";
         else
             ret += ", Gold";
     }
@@ -891,8 +885,6 @@ static const string _detailed_cost_description(ability_type ability)
         int gold_amount = get_gold_cost(ability);
         if (gold_amount)
             ret << gold_amount;
-        else if (ability == ABIL_GOZAG_POTION_PETITION)
-            ret << "free";
         else
             ret << "variable";
     }
@@ -1153,7 +1145,6 @@ talent get_talent(ability_type ability, bool check_confused)
     case ABIL_JIYVA_CALL_JELLY:
     case ABIL_JIYVA_CURE_BAD_MUTATION:
     case ABIL_JIYVA_JELLY_PARALYSE:
-    case ABIL_GOZAG_POTION_PETITION:
     case ABIL_GOZAG_CALL_MERCHANT:
     case ABIL_GOZAG_BRIBE_BRANCH:
     case ABIL_RU_DRAW_OUT_POWER:
@@ -1732,9 +1723,6 @@ static bool _check_ability_possible(const ability_def& abil,
         }
         return true;
 
-    case ABIL_GOZAG_POTION_PETITION:
-        return gozag_setup_potion_petition(quiet);
-
     case ABIL_GOZAG_CALL_MERCHANT:
         return gozag_setup_call_merchant(quiet);
 
@@ -1838,7 +1826,6 @@ bool activate_talent(const talent& tal)
         case ABIL_TRAN_BAT:
         case ABIL_ASHENZARI_END_TRANSFER:
         case ABIL_ZIN_VITALISATION:
-        case ABIL_GOZAG_POTION_PETITION:
             hungerCheck = false;
             break;
         default:
@@ -3101,11 +3088,6 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
             crawl_state.zero_turns_taken();
             return SPRET_ABORT;
         }
-        break;
-
-    case ABIL_GOZAG_POTION_PETITION:
-        fail_check();
-        run_uncancel(UNC_POTION_PETITION, 0);
         break;
 
     case ABIL_GOZAG_CALL_MERCHANT:
