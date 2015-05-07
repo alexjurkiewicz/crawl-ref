@@ -1914,6 +1914,23 @@ static bool _give_veh_gift(bool forced = false)
     return success;
 }
 
+static bool _give_gozag_gift(bool forced = false)
+{
+    bool success = false;
+
+    // This works out to approximately one gift every 1000 gold earned,
+    // since the chance is calculated once per added gold
+    if (!you.gift_timeout || forced)
+    {
+        you.gift_timeout = random_range(150,200);
+        dprf("Giving gozag gift, new timeout is %d", you.gift_timeout);
+        success = gozag_call_merchant(true);
+    }
+
+    return success;
+}
+
+
 static bool _give_nemelex_gift(bool forced = false)
 {
     // But only if you're not flying over deep water.
@@ -2029,6 +2046,10 @@ bool do_god_gift(bool forced)
 
         case GOD_VEHUMET:
             success = _give_veh_gift(forced);
+            break;
+
+        case GOD_GOZAG:
+            success = _give_gozag_gift(forced);
             break;
 
         default:
@@ -3635,6 +3656,9 @@ void join_religion(god_type which_god, bool immediate)
 
     if (you_worship(GOD_GOZAG))
     {
+        // Set initial gift timeout
+        you.gift_timeout = random_range(150,200);
+
         bool needs_redraw = false;
         if (fee > 0)
         {

@@ -130,7 +130,7 @@ bool gozag_setup_potion_petition(bool quiet = false);
 bool gozag_potion_petition();
 int gozag_price_for_shop(bool max = false);
 bool gozag_setup_call_merchant(bool quiet = false);
-bool gozag_call_merchant();
+bool gozag_call_merchant(bool gift = false);
 int gozag_type_bribable(monster_type type, bool force = false);
 branch_type gozag_bribable_branch(monster_type type);
 bool gozag_branch_bribable(branch_type branch);

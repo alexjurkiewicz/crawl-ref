@@ -7687,6 +7687,16 @@ void player::reset_escaped_death()
 void player::add_gold(int delta)
 {
     set_gold(gold + delta);
+    if (you_worship(GOD_GOZAG))
+    {
+        // gozag gift timeout is based on gold collected rather than piety
+        // so scale the gift timeout appropriately
+        // we scale by 6 with a timeout of 150-200, so 900-1200gold per gift
+        const int gift_dec = div_rand_round(delta, 6);
+        dprf("Decreasing gozag gift timeout by %d", gift_dec);
+        you.gift_timeout = max(0, you.gift_timeout - gift_dec);
+        do_god_gift();
+    }
 }
 
 void player::del_gold(int delta)

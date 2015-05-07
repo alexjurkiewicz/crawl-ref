@@ -4719,7 +4719,7 @@ static void _gozag_place_shop(int index)
         _gozag_place_shop_here(index);
 }
 
-bool gozag_call_merchant()
+bool gozag_call_merchant(bool gift)
 {
     // Only offer useful shops.
     vector<shop_type> valid_shops;
@@ -4752,13 +4752,13 @@ bool gozag_call_merchant()
         if (!you.props.exists(make_stringf(GOZAG_SHOPKEEPER_NAME_KEY, i)))
             _setup_gozag_shop(i, valid_shops);
 
-    const int shop_index = _gozag_choose_shop();
+    const int shop_index = gift ? random2(3) + 1 : _gozag_choose_shop();
     if (shop_index == -1) // hup!
         return false;
 
     ASSERT(shop_index >= 0 && shop_index < _gozag_max_shops());
 
-    const int cost = _gozag_shop_price(shop_index);
+    const int cost = gift ? 0 : _gozag_shop_price(shop_index);
     ASSERT(you.gold >= cost);
 
     you.del_gold(cost);
@@ -4766,8 +4766,11 @@ bool gozag_call_merchant()
 
     _gozag_place_shop(shop_index);
 
-    you.attribute[ATTR_GOZAG_SHOPS]++;
-    you.attribute[ATTR_GOZAG_SHOPS_CURRENT]++;
+    if (!gift)
+    {
+        you.attribute[ATTR_GOZAG_SHOPS]++;
+        you.attribute[ATTR_GOZAG_SHOPS_CURRENT]++;
+    }
 
     for (int j = 0; j < _gozag_max_shops(); j++)
     {
