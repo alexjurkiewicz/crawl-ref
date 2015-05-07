@@ -186,8 +186,8 @@ ability_type god_abilities[NUM_GODS][MAX_GOD_ABILITIES] =
     { ABIL_NON_ABILITY, ABIL_DITHMENOS_SHADOW_STEP, ABIL_NON_ABILITY,
       ABIL_NON_ABILITY, ABIL_DITHMENOS_SHADOW_FORM },
     // Gozag
-    { ABIL_GOZAG_CALL_MERCHANT,
-      ABIL_GOZAG_BRIBE_BRANCH, ABIL_NON_ABILITY, ABIL_NON_ABILITY },
+    { ABIL_NON_ABILITY, ABIL_NON_ABILITY, ABIL_GOZAG_BRIBE_BRANCH,
+      ABIL_NON_ABILITY, ABIL_NON_ABILITY },
     // Qazlal
     { ABIL_NON_ABILITY, ABIL_QAZLAL_UPHEAVAL, ABIL_QAZLAL_ELEMENTAL_FORCE,
       ABIL_NON_ABILITY, ABIL_QAZLAL_DISASTER_AREA },
@@ -448,8 +448,6 @@ static const ability_def Ability_List[] =
       0, 0, 0, 0, 0, ABFLAG_NONE },
 
     // Gozag
-    { ABIL_GOZAG_CALL_MERCHANT, "Call Merchant",
-      0, 0, 0, 0, 0, ABFLAG_GOLD },
     { ABIL_GOZAG_BRIBE_BRANCH, "Bribe Branch",
       0, 0, 0, 0, 0, ABFLAG_GOLD },
 
@@ -720,8 +718,6 @@ int get_gold_cost(ability_type ability)
 {
     switch (ability)
     {
-    case ABIL_GOZAG_CALL_MERCHANT:
-        return gozag_price_for_shop(true);
     case ABIL_GOZAG_BRIBE_BRANCH:
         return GOZAG_BRIBE_AMOUNT;
     default:
@@ -1145,7 +1141,6 @@ talent get_talent(ability_type ability, bool check_confused)
     case ABIL_JIYVA_CALL_JELLY:
     case ABIL_JIYVA_CURE_BAD_MUTATION:
     case ABIL_JIYVA_JELLY_PARALYSE:
-    case ABIL_GOZAG_CALL_MERCHANT:
     case ABIL_GOZAG_BRIBE_BRANCH:
     case ABIL_RU_DRAW_OUT_POWER:
     case ABIL_RU_POWER_LEAP:
@@ -1722,9 +1717,6 @@ static bool _check_ability_possible(const ability_def& abil,
             return false;
         }
         return true;
-
-    case ABIL_GOZAG_CALL_MERCHANT:
-        return gozag_setup_call_merchant(quiet);
 
     case ABIL_GOZAG_BRIBE_BRANCH:
         return gozag_check_bribe_branch(quiet);
@@ -3088,11 +3080,6 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
             crawl_state.zero_turns_taken();
             return SPRET_ABORT;
         }
-        break;
-
-    case ABIL_GOZAG_CALL_MERCHANT:
-        fail_check();
-        run_uncancel(UNC_CALL_MERCHANT, 0);
         break;
 
     case ABIL_GOZAG_BRIBE_BRANCH:

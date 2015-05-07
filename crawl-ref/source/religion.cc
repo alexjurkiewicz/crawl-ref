@@ -30,9 +30,11 @@
 #include "describe-god.h"
 #include "dgnevent.h"
 #include "dlua.h"
+#include "dungeon.h"
 #include "english.h"
 #include "env.h"
 #include "exercise.h"
+#include "food.h"
 #include "godabil.h"
 #include "godcompanions.h"
 #include "godconduct.h"
@@ -47,6 +49,8 @@
 #include "items.h"
 #include "libutil.h"
 #include "makeitem.h"
+#include "mapdef.h"
+#include "mapmark.h"
 #include "message.h"
 #include "misc.h"
 #include "mon-place.h"
@@ -55,6 +59,7 @@
 #include "output.h"
 #include "player-stats.h"
 #include "prompt.h"
+#include "shopping.h"
 #include "skills.h"
 #include "spl-book.h"
 #include "spl-miscast.h"
@@ -1914,6 +1919,42 @@ static bool _give_veh_gift(bool forced = false)
     return success;
 }
 
+static bool _gozag_call_merchant()
+{
+    // Check we're over open space
+    if (!(grd(you.pos()) == DNGN_FLOOR))
+        return false;
+
+    // Determine the shop type
+    const shop_type type = random_choose_weighted(
+        you_foodless_normally() ? 0 : 1, SHOP_FOOD,
+        you.species == SP_MUMMY ? 0 : 1, SHOP_DISTILLERY,
+        player_mutation_level(MUT_NO_ARTIFICE) ? 0 : 1, SHOP_EVOKABLES,
+        you.species == SP_FELID ? 0 : 1, SHOP_ARMOUR_ANTIQUE,
+        you.species == SP_FELID ? 0 : 1, SHOP_WEAPON_ANTIQUE
+    );
+
+    const string spec = make_stringf("%s shop gozag", shoptype_to_str(type));
+
+    // place the shop
+    keyed_mapspec kmspec;
+    kmspec.set_feat(spec, false);
+    if (!kmspec.get_feat().shop.get())
+        die("Invalid shop spec?");
+
+    feature_spec feat = kmspec.get_feat();
+    place_spec_shop(you.pos(), type);
+
+    link_items();
+    env.markers.add(new map_feature_marker(you.pos(),
+                                           DNGN_ABANDONED_SHOP));
+    env.markers.clear_need_activate();
+
+    mprf(MSGCH_GOD, "A shop appears before you!");
+
+    return true;
+}
+
 static bool _give_gozag_gift(bool forced = false)
 {
     bool success = false;
@@ -1922,9 +1963,10 @@ static bool _give_gozag_gift(bool forced = false)
     // since the chance is calculated once per added gold
     if (!you.gift_timeout || forced)
     {
-        you.gift_timeout = random_range(150,200);
-        dprf("Giving gozag gift, new timeout is %d", you.gift_timeout);
-        success = gozag_call_merchant(true);
+        success = _gozag_call_merchant();
+        if (success)
+            you.gift_timeout = random_range(150,200);
+
     }
 
     return success;
@@ -3671,13 +3713,6 @@ void join_religion(god_type which_god, bool immediate)
 
         for (size_t i = 0; i < abilities.size(); ++i)
         {
-            if (abilities[i] == ABIL_GOZAG_POTION_PETITION
-                && !you.attribute[ATTR_GOZAG_FIRST_POTION])
-            {
-                simple_god_message(" offers you a free set of potion effects!");
-                needs_redraw = true;
-                continue;
-            }
             if (you.gold >= get_gold_cost(abilities[i])
                 && _abil_chg_message(god_gain_power_messages[you.religion][i],
                                      "You have enough gold to %s.", i))

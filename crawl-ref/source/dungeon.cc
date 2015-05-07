@@ -309,9 +309,6 @@ bool builder(bool enable_random_maps, dungeon_feature_type dest_stairs_type)
                 for (monster_iterator mi; mi; ++mi)
                     gozag_set_bribe(*mi);
 
-                if (you.props.exists(GOZAG_ANNOUNCE_SHOP_KEY))
-                    unmark_offlevel_shop(level_id::current());
-
                 return true;
             }
         }

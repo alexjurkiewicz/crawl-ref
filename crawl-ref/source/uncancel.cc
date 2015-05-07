@@ -62,11 +62,6 @@ void run_uncancels()
             if (!recruit_mercenary(arg) && crawl_state.seen_hups)
                 return;
             break;
-
-        case UNC_CALL_MERCHANT:
-            if (!gozag_call_merchant() && crawl_state.seen_hups)
-                return;
-            break;
         }
 
         if (act != -1)

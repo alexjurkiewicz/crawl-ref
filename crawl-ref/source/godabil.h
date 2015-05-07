@@ -121,8 +121,6 @@ void dithmenos_shadow_throw(coord_def target, const item_def &item);
 void dithmenos_shadow_spell(bolt* orig_beam, spell_type spell);
 
 int gozag_price_for_shop(bool max = false);
-bool gozag_setup_call_merchant(bool quiet = false);
-bool gozag_call_merchant(bool gift = false);
 int gozag_type_bribable(monster_type type, bool force = false);
 branch_type gozag_bribable_branch(monster_type type);
 bool gozag_branch_bribable(branch_type branch);
