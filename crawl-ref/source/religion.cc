@@ -1954,7 +1954,7 @@ static bool _gozag_call_merchant()
     env.markers.add(new map_feature_marker(you.pos(), DNGN_ABANDONED_SHOP));
     env.markers.clear_need_activate();
 
-    mprf(MSGCH_GOD, "A shop appears before you!");
+    simple_god_message(" opens a shop for your coin!");
 
     return true;
 }
@@ -1963,8 +1963,6 @@ static bool _give_gozag_gift(bool forced = false)
 {
     bool success = false;
 
-    // This works out to approximately one gift every 1000 gold earned,
-    // since the chance is calculated once per added gold
     if (!you.gift_timeout || forced)
     {
         success = _gozag_call_merchant();
