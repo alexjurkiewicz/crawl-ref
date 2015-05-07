@@ -417,13 +417,6 @@ void goldify_corpse(item_def &corpse)
     corpse.base_type = OBJ_GOLD;
     corpse.quantity = base_gold / 2 + random2avg(base_gold, 2);
     item_colour(corpse);
-
-    // Apply the gold aura effect to the player.
-    const int dur = corpse.quantity * 2;
-    if (dur > you.duration[DUR_GOZAG_GOLD_AURA])
-        you.set_duration(DUR_GOZAG_GOLD_AURA, dur);
-
-    you.props["gozag_gold_aura_amount"].get_int()++;
 }
 
 // Returns the item slot of a generated corpse, or -1 if no corpse.

@@ -2212,38 +2212,6 @@ void handle_monster_move(monster* mons)
         return;
     }
 
-    if (you.duration[DUR_GOZAG_GOLD_AURA]
-        && in_good_standing(GOD_GOZAG)
-        && !mons->asleep()
-        && !mons_is_conjured(mons->type)
-        && !mons_is_tentacle_or_tentacle_segment(mons->type)
-        && !mons->wont_attack())
-    {
-        const int gold = you.props["gozag_gold_aura_amount"].get_int();
-        if (bernoulli(gold, 3.0/100.0))
-        {
-            if (gozag_gold_in_los(mons))
-            {
-                simple_monster_message(mons,
-                    " is distracted by the nearby gold.");
-            }
-            else if (you.gold > 0)
-                simple_monster_message(mons, " is distracted by your gold.");
-            // Just in case!
-            else
-                simple_monster_message(mons,
-                                       " is distracted by imaginary riches.");
-
-            mons->add_ench(
-                mon_enchant(ENCH_GOLD_LUST, 1, nullptr,
-                            random_range(1, 5) * BASELINE_DELAY));
-            mons->foe = MHITNOT;
-            mons->target = mons->pos();
-            mons->speed_increment -= non_move_energy;
-            return;
-        }
-    }
-
     if (crawl_state.disables[DIS_MON_ACT] && _unfriendly_or_insane(mons))
     {
         mons->speed_increment -= non_move_energy;

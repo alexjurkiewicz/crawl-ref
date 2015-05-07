@@ -3020,7 +3020,6 @@ void excommunication(god_type new_god, bool immediate)
                                      "their debts without your funds.");
             you.attribute[ATTR_GOZAG_SHOPS_CURRENT] = 0;
         }
-        invalidate_agrid(true); // gold auras
         for (branch_iterator it; it; ++it)
             branch_bribe[it->id] = 0;
         add_daction(DACT_BRIBE_TIMEOUT);
