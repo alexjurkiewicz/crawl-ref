@@ -1921,33 +1921,37 @@ static bool _give_veh_gift(bool forced = false)
 
 static bool _gozag_call_merchant()
 {
-    // Check we're over open space
-    if (!(grd(you.pos()) == DNGN_FLOOR))
-        return false;
-
     // Determine the shop type
     const shop_type type = random_choose_weighted(
         you_foodless_normally() ? 0 : 1, SHOP_FOOD,
         you.species == SP_MUMMY ? 0 : 1, SHOP_DISTILLERY,
         player_mutation_level(MUT_NO_ARTIFICE) ? 0 : 1, SHOP_EVOKABLES,
         you.species == SP_FELID ? 0 : 1, SHOP_ARMOUR_ANTIQUE,
-        you.species == SP_FELID ? 0 : 1, SHOP_WEAPON_ANTIQUE
+        you.species == SP_FELID ? 0 : 1, SHOP_WEAPON_ANTIQUE,
+        0
     );
 
-    const string spec = make_stringf("%s shop gozag", shoptype_to_str(type));
+    // get the shop position
+    vector<coord_def> valid_pos;
+    coord_def pos;
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
+    {
+        if (grd(*ri) == DNGN_FLOOR)
+            valid_pos.push_back(*ri);
+    }
+    if (valid_pos.size() < 1)
+        return false;
+    pos = valid_pos[random2(valid_pos.size())];
 
     // place the shop
+    const string spec = make_stringf("%s shop gozag", shoptype_to_str(type));
     keyed_mapspec kmspec;
     kmspec.set_feat(spec, false);
-    if (!kmspec.get_feat().shop.get())
-        die("Invalid shop spec?");
-
-    feature_spec feat = kmspec.get_feat();
-    place_spec_shop(you.pos(), type);
-
+    const feature_spec feat = kmspec.get_feat();
+    //place_spec_shop(you.pos(), *feat.shop.get());
+    place_spec_shop(pos, *feat.shop.get());
     link_items();
-    env.markers.add(new map_feature_marker(you.pos(),
-                                           DNGN_ABANDONED_SHOP));
+    env.markers.add(new map_feature_marker(you.pos(), DNGN_ABANDONED_SHOP));
     env.markers.clear_need_activate();
 
     mprf(MSGCH_GOD, "A shop appears before you!");
