@@ -3178,7 +3178,7 @@ bool god_likes_items(god_type god, bool greedy_explore)
     case GOD_ASHENZARI:
         return true;
 
-    case NUM_GODS: case GOD_RANDOM: case GOD_NAMELESS:
+    case NUM_GODS: case GOD_NAMELESS:
         die("Bad god for item sacrifice check: %d", static_cast<int>(god));
 
     default:
@@ -4619,6 +4619,7 @@ static bool _is_temple_god(god_type god)
     case GOD_LUGONU:
     case GOD_BEOGH:
     case GOD_JIYVA:
+    case GOD_RANDOM: // Handled specially in initialise_temples
         return false;
 
     default:

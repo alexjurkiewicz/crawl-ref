@@ -446,6 +446,8 @@ static peeve_map divine_peeves[] =
     peeve_map(),
     // GOD_RU,
     peeve_map(),
+    // GOD_RANDOM,
+    peeve_map(),
 };
 
 
@@ -838,6 +840,8 @@ static like_map divine_likes[] =
             }
         } },
     },
+    // GOD_RANDOM,
+    like_map(),
 };
 
 /**

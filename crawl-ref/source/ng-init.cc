@@ -233,6 +233,10 @@ void initialise_temples()
 
     vector<god_type> overflow_gods;
 
+    // Random god is always an overflow altar -- but only exists sometimes
+    if one_chance_in(3)
+        overflow_gods.push_back(GOD_RANDOM);
+
     while (god_list.size() > main_temple_size)
     {
         overflow_gods.push_back(god_list.back());
