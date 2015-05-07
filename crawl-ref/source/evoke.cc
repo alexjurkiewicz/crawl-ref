@@ -118,7 +118,7 @@ static bool _reaching_weapon_attack(const item_def& wpn)
     args.range = 2;
     args.top_prompt = "Attack whom?";
     args.cancel_at_self = true;
-    targetter_reach hitfunc(&you, REACH_TWO);
+    targetter_reach hitfunc(&you, weapon_reach(wpn));
     args.hitfunc = &hitfunc;
 
     direction(beam, args);
@@ -154,7 +154,8 @@ static bool _reaching_weapon_attack(const item_def& wpn)
     const coord_def first_middle(x_first_middle, y_first_middle);
     const coord_def second_middle(x_second_middle, y_second_middle);
 
-    if (x_distance > 2 || y_distance > 2)
+    const int range = weapon_reach(wpn);
+    if (x_distance > range || y_distance > range)
     {
         mpr("Your weapon cannot reach that far!");
         return false; // Shouldn't happen with confused swings

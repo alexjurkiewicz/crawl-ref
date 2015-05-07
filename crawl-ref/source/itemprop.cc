@@ -2143,7 +2143,7 @@ int ammo_type_damage(int missile_type)
 reach_type weapon_reach(const item_def &item)
 {
     if (item_attack_skill(item) == SK_POLEARMS)
-        return REACH_TWO;
+        return REACH_THREE;
     return REACH_NONE;
 }
 
