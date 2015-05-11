@@ -6493,6 +6493,9 @@ int player_res_magic(bool calc_unid, bool temp)
     if (you.duration[DUR_TROGS_HAND] && temp)
         rm += MR_PIP * 2;
 
+    // Intelligence
+    rm += you.int();
+
     // Enchantment effect
     if (you.duration[DUR_LOWERED_MR] && temp)
         rm /= 2;
