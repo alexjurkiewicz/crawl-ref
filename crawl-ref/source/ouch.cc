@@ -43,6 +43,7 @@
 #include "items.h"
 #include "libutil.h"
 #include "macro.h"
+#include "makeitem.h"
 #include "message.h"
 #include "mgen_data.h"
 #include "misc.h"
@@ -754,7 +755,11 @@ static void _place_player_corpse(bool explode)
         return;
 
     if (in_good_standing(GOD_GOZAG))
-        goldify_corpse(corpse);
+    {
+        corpse.base_type = OBJ_GOLD;
+        corpse.quantity = 1;
+        item_colour(corpse);
+    }
 
     if (explode && explode_corpse(corpse, you.pos()))
         return;

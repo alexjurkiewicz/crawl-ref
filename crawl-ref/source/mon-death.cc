@@ -5,6 +5,8 @@
 
 #include "AppHdr.h"
 
+#include <cmath>
+
 #include "mon-death.h"
 
 #include "act-iter.h"
@@ -398,28 +400,28 @@ static void _give_experience(int player_exp, int monster_exp,
 /**
  * Turn a given corpse into gold. Praise Gozag!
  *
- * Gold is random, but correlates weakly with monster mass.
+ * Gold is random, but correlates with monster threat.
  *
  * Also sets the gold distraction timer on the player.
  *
  * @param corpse        The corpse item to be Midasified.
  */
-void goldify_corpse(item_def &corpse)
+void goldify_corpse(const monster* mons, item_def &corpse)
 {
-    int base_gold = 7;
-    // monsters with more chunks than SIZE_MEDIUM give more than base gold
-    const int extra_chunks = (max_corpse_chunks(corpse.mon_type)
-                              - max_corpse_chunks(MONS_HUMAN)) * 2;
-    if (extra_chunks > 0)
-        base_gold += extra_chunks;
+    const int base_gold = 3;
+    const double difficulty = get_fuzzied_monster_difficulty(mons);
+    const double mult = 1 + std::log(difficulty);
+    dprf("Corpse gold value: %.1f", base_gold * mult);
+    const int amount = random2(base_gold * mult);
+    dprf("Corpse fuzzed gold value: %d", amount);
 
-    corpse.clear();
+    // Goldify the corpe
     corpse.base_type = OBJ_GOLD;
-    corpse.quantity = base_gold / 2 + random2avg(base_gold, 2);
+    corpse.quantity = amount;
     item_colour(corpse);
 
     // Apply the gold aura effect to the player.
-    const int dur = corpse.quantity * 2;
+    const int dur = amount * 2;
     if (dur > you.duration[DUR_GOZAG_GOLD_AURA])
         you.set_duration(DUR_GOZAG_GOLD_AURA, dur);
 
@@ -477,7 +479,7 @@ int place_monster_corpse(const monster* mons, bool silent, bool force)
 
     if (!force && goldify)
     {
-        goldify_corpse(corpse);
+        goldify_corpse(mons, corpse);
         // If gold would be destroyed, give it directly to the player instead.
         if (feat_eliminates_items(grd(mons->pos())))
         {
