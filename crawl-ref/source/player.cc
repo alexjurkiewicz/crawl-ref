@@ -2303,19 +2303,26 @@ static int _player_armour_adjusted_dodge_bonus(int scale)
 {
     // stepdowns at 10 and 24 dex; the last two parameters are not important.
     const int ev_dex = stepdown_value(you.dex(), 10, 24, 72, 72);
+    dprf("ev_dex: %d", ev_dex);
 
     const int dodge_bonus =
         (70 + you.skill(SK_DODGING, 10) * ev_dex) * scale
         / (20 - _player_evasion_size_factor()) / 10;
+    dprf("dodge_bonus: %d", dodge_bonus);
 
     const int armour_dodge_penalty = you.unadjusted_body_armour_penalty() - 3;
     if (armour_dodge_penalty <= 0)
         return dodge_bonus;
+    dprf("armour_dodge_penalty: %d", armour_dodge_penalty);
 
     const int str = max(1, you.strength());
+    int final;
     if (armour_dodge_penalty >= str)
-        return dodge_bonus * str / (armour_dodge_penalty * 2);
-    return dodge_bonus - dodge_bonus * armour_dodge_penalty / (str * 2);
+        final = dodge_bonus * str / (armour_dodge_penalty * 2);
+    else
+        final = dodge_bonus - dodge_bonus * armour_dodge_penalty / (str * 2);
+    dprf("_player_armour_adjusted_dodge_bonus: %d", final);
+    return final;
 }
 
 // Total EV for player using the revised 0.6 evasion model.
