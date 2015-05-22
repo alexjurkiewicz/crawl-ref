@@ -1721,7 +1721,10 @@ static bool _prompt_stairs(dungeon_feature_type ygrd, bool down)
                                      branches[root_branch].longname,
                                      crawl_state.game_is_tutorial() ? "" :
                                      " This will make you lose the game!");
-        if (!yesno(prompt.c_str(), false, 'n'))
+        if (!yesno(prompt.c_str(), false, 'n')
+            && (crawl_state.game_is_tutorial()
+                || yesno("You lack the Orb of Zot, are you sure?",
+                         false, 'n')))
         {
             mpr("Alright, then stay!");
             return false;
