@@ -93,6 +93,10 @@ class WebtilesSocketConnection(object):
             self.logger.warning("Game socket send timeout", exc_info=True)
             self.close()
             return
+        except IOError:
+            self.logger.warning("Game socket went MIA", exc_info=True)
+            self.close()
+            return
         end = datetime.now()
         if end - start >= timedelta(seconds=1):
             self.logger.warning("Slow socket send: " + str(end - start))
