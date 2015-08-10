@@ -223,8 +223,9 @@ class CrawlWebSocket(tornado.websocket.WebSocketHandler):
         self.reset_timeout()
 
         if config["max_connections"] < len(sockets):
-            self.send_message("close", reason="The maximum number of "
-                              "connections has been reached, sorry :(")
+            msg = "The maximum number of connections has been reached, sorry."
+            self.send_message("close", reason=msg)
+            self.logger.warn(msg + " (max: %s)" + config["max_connections"])
             self.close()
         else:
             # don't allow cookie authentication from cross-site requests
