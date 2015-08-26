@@ -1483,10 +1483,6 @@ int acquirement_create_item(object_class_type class_wanted,
     ASSERT(!is_useless_item(mitm[thing_created], false) || agent == GOD_XOM);
     ASSERT(!god_hates_item(mitm[thing_created]));
 
-    // Moving this above the move since it might not exist after falling.
-    if (thing_created != NON_ITEM && !quiet)
-        canned_msg(MSG_SOMETHING_APPEARS);
-
     // If a god wants to give you something but the floor doesn't want it,
     // it counts as a failed acquirement - no piety, etc cost.
     if (feat_destroys_items(grd(pos))
@@ -1499,7 +1495,16 @@ int acquirement_create_item(object_class_type class_wanted,
             return _failed_acquirement(quiet);
     }
 
-    move_item_to_grid(&thing_created, pos);
+    if (!move_item_to_inv(thing_created, INT_MAX))
+    {
+        move_item_to_grid(&thing_created, pos);
+        if (!quiet)
+            canned_msg(MSG_SOMETHING_APPEARS);
+    } else {
+        // It would be nice if this message appeared before 'a - item' did
+        if (class_wanted != OBJ_GOLD)
+            mprf("Something appears in your inventory!");
+    }
 
     if (thing_created != NON_ITEM)
     {
