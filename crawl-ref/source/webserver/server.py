@@ -134,8 +134,8 @@ def signal_handler(signum, frame):
     if len(sockets) == 0:
         ioloop.stop()
 
-def usr1_handler(signum, frame):
-    logging.info("Received USR1, reloading config.")
+def sighup_handler(signum, frame):
+    logging.info("Received HUP, reloading config.")
     config.reload()
 
 def usr2_handler(signum, frame):
@@ -269,8 +269,7 @@ if __name__ == "__main__":
         locale.setlocale(locale.LC_ALL, '')
 
     signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGHUP, signal_handler)
-    signal.signal(signal.SIGUSR1, usr1_handler)
+    signal.signal(signal.SIGHUP, sighup_handler)
     signal.signal(signal.SIGUSR2, usr2_handler)
 
     userdb.ensure_user_db_exists()
