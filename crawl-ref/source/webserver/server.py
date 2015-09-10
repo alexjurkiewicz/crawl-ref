@@ -62,7 +62,7 @@ def daemonize():
         pid = os.fork()
         if pid > 0:
             os._exit(0)
-    except OSError, e:
+    except OSError as e:
         err_exit("Fork #1 failed! ({0})".format(e.strerror))
 
     os.setsid()
@@ -71,7 +71,7 @@ def daemonize():
         pid = os.fork()
         if pid > 0:
             os._exit(0)
-    except OSError, e:
+    except OSError as e:
         err_exit("Fork #2 failed! ({0})".format(e.strerror))
 
     with open("/dev/null", "rw") as f:
@@ -93,7 +93,7 @@ def write_pidfile():
             err_exit("PIDfile {0} contains non-numeric value".format(pidfile))
         try:
             os.kill(pid, 0)
-        except OSError, why:
+        except OSError as why:
             if why[0] == errno.ESRCH:
                 # The pid doesn't exist.
                 logging.warn("Removing stale pidfile {0}".format(pidfile))
@@ -114,7 +114,7 @@ def remove_pidfile():
         return
     try:
         os.remove(pidfile)
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.EACCES or e.errno == errno.EPERM:
             logging.warn("No permission to delete pidfile!")
         else:
