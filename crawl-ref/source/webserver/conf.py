@@ -266,6 +266,9 @@ class Conf(object):
         if "client_path" in game and not os.path.exists(game["client_path"]):
             raise ConfigError("Client data path {0} doesn't "
                               "exist!".format(game["client_path"]))
+        if "dir_path" not in game:
+            self._warn("dir_path not set for {0}, "
+                       "won't be able to save buggy games.".format(game["id"]))
         if type(game.get("options", [])) is not list:
             raise ConfigError("The options field should be a list!")
         if type(game.get("pre_options", [])) is not list:
