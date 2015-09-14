@@ -220,15 +220,44 @@ def init_logging():
         err_exit(e.msg)
 
     log_conf = config["logging_config"]
-    if log_conf.get("filename"):
-        log_handler = RotatingFileHandler(log_conf["filename"],
-                                          maxBytes=log_conf["max_bytes"],
-                                          backupCount=log_conf["backup_count"])
-    else:
-        log_handler = logging.StreamHandler(None)
+
+    # Stdout logging is always enabled
+    log_handler = logging.StreamHandler(None)
     log_handler.setFormatter(logging.Formatter(log_conf["format"],
                                                log_conf.get("datefmt")))
     logging.getLogger().addHandler(log_handler)
+
+
+    log_file = log_conf.get("filename")
+    if log_file:
+        log_handler = RotatingFileHandler(log_file,
+                                          maxBytes=log_conf["max_bytes"],
+                                          backupCount=log_conf["backup_count"])
+        log_handler.setFormatter(logging.Formatter(log_conf["format"],
+                                                   log_conf.get("datefmt")))
+        logging.getLogger().addHandler(log_handler)
+
+    syslog_facility = log_conf.get("syslog")
+    if syslog_facility:
+        if syslog_facility == 'daemon':
+            facility = logging.handlers.SysLogHandler.LOG_DAEMON
+        elif syslog_facility.startswith('local') and \
+                syslog_facility[-1].isdigit():
+            facility = logging.handlers.SysLogHandler.LOG_LOCAL0 + \
+                int(syslog_facility[-1])
+        elif syslog_facility == 'syslog':
+            facility = logging.handlers.SysLogHandler.LOG_SYSLOG
+        elif syslog_facility == 'user':
+            facility = logging.handlers.SysLogHandler.LOG_USER
+        else:
+            logging.warning("Unknown syslog facility %s, using daemon",
+                            syslog_facility)
+            facility = logging.handlers.SysLogHandler.LOG_DAEMON
+        syslog_handler = logging.SyslogHandler(facility=facility)
+        log_handler.setFormatter(logging.Formatter(log_conf["format"],
+                                                   log_conf.get("datefmt")))
+        logging.getLogger().addHandler(syslog_handler)
+
     if log_conf.get("level") is not None:
         logging.getLogger().setLevel(log_conf["level"])
     logging.getLogger().addFilter(util.TornadoFilter())

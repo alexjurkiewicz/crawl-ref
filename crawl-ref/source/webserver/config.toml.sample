@@ -278,19 +278,27 @@ hide_versions = []
 
 # Logging Configuration
 # =====================
+#
+# Log are always written to stdout, here you can configure additional
+# logging destinations and the overall log level.
 
 [logging_config]
-# When filename is not defined, stdout is used.
+format = "%(asctime)s %(levelname)s: %(message)s"
+# 10, 20, 30, 40 = DEBUG, INFO, WARNING, ERROR
+level = 20
+
+# Enable logging of requests & websocket connect/disconnect events
+# Can be noisy on a big server
+enable_access_log = true
+
+# Specify a filename for direct file writing
 # filename = "webtiles.log"
 # Limits for the logger when writing to a file
 # max_bytes = 10000000
 # backup_count = 5
 
-format = "%(asctime)s %(levelname)s: %(message)s"
-# 10, 20, 30, 40 = DEBUG, INFO, WARNING, ERROR
-level = 20
-# Enable logging of requests & websocket connect/disconnect events
-enable_access_log = true
+# Enable syslog logging by specifying a facility
+# syslog_facility = daemon
 
 # Janitor Commands
 # ================
