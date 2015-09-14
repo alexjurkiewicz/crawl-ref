@@ -747,10 +747,10 @@ class CrawlWebSocket(tornado.websocket.WebSocketHandler):
                 elif self.process:
                     self.process.handle_input(message)
                 elif not self.watched_game:
-                    self.logger.warning("Didn't know how to handle msg: %s",
-                                        obj["msg"])
+                    self.logger.warning("Can't handle JSON message: %s",
+                                        obj)
             except Exception:
-                self.logger.warning("Error while handling JSON message!",
+                self.logger.warning("Couldn't decode JSON message.",
                                     exc_info=True)
 
         elif self.process:
