@@ -60,11 +60,11 @@ static int _stat_modifier(stat_type stat, bool innate_only);
  * @param s     The stat in question (e.g. STAT_STR).
  * @param base  Whether to disregard stat modifiers other than those from
  *              mutations.
- * @return      The player's maximum for the given stat; capped at 72.
+ * @return      The player's maximum for the given stat; capped at 144.
  */
 int player::max_stat(stat_type s, bool base) const
 {
-    return min(base_stats[s] + _stat_modifier(s, base), 72);
+    return min(base_stats[s] + _stat_modifier(s, base), 144);
 }
 
 int player::max_strength() const
