@@ -41,6 +41,10 @@ const char * const GOZAG_SHOP_COST_KEY       = "gozag_shop_cost_%d";
 
 #define RU_SAC_XP_LEVELS 2
 
+#define HEPLIAKLQANA_RESIST_FIRE_KEY "hepliaklqana_resist_fire"
+#define HEPLIAKLQANA_RESIST_COLD_KEY "hepliaklqana_resist_cold"
+#define HEPLIAKLQANA_SINV_KEY "hepliaklqana_sinv"
+
 struct bolt;
 class stack_iterator;
 class dist;

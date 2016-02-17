@@ -57,6 +57,7 @@
 #include "output.h"
 #include "player-stats.h"
 #include "prompt.h"
+#include "random.h"
 #include "shopping.h"
 #include "skills.h"
 #include "spl-book.h"
@@ -1773,6 +1774,28 @@ static void _regain_item_memory(const monster &ancestor,
     _regain_memory(ancestor, item_base_name(base_type, sub_type));
 }
 
+struct hepliaklqana_unlock
+{
+    string description;
+    string key;
+};
+
+static const hepliaklqana_unlock hepliaklqana_unlocks[] =
+{
+    {
+        "gloves of resist fire",
+        HEPLIAKLQANA_RESIST_FIRE_KEY,
+    },
+    {
+        "cloak of resist cold",
+        HEPLIAKLQANA_RESIST_COLD_KEY,
+    },
+    {
+        "hat of see invisible",
+        HEPLIAKLQANA_SINV_KEY,
+    },
+};
+
 /**
  * Update the ancestor's stats after the player levels up. Upgrade HD and HP,
  * and give appropriate messaging for that and any other notable upgrades
@@ -1819,16 +1842,24 @@ void upgrade_hepliaklqana_ancestor()
     // TODO: misc messages
 
     const int HD = ancestor->get_experience_level();
-    // not a big fan of this hardcoding
-    // consider using _hepliaklqana_ancestor_resists
-    if (HD == 11)
-        _regain_memory(*ancestor, "gloves of protection from fire");
-    if (HD == 12)
-        _regain_memory(*ancestor, "cloak of protection from cold");
-    // also hardcoded....
-    if (HD == 15)
-        _regain_memory(*ancestor, "ring of see invisible");
-    // if innate relec comes back, those are clearly boots...
+    // This condition should have the same number of entruies as hepliaklqana_unlocks
+    if (HD == 11
+        || HD == 12
+        || HD == 15)
+    {
+        int tries = 50; // I would really like a more elegant way
+        hepliaklqana_unlock unlock;
+        do
+            unlock = hepliaklqana_unlocks[random2(ARRAYSZ(hepliaklqana_unlocks))];
+        while (--tries && you.props[unlock.key].get_bool() == true); // doesn't work?
+        if (tries)
+        {
+            you.props[unlock.key] = true;
+            _regain_memory(*ancestor, unlock.description.c_str());
+        }
+        else
+            die("Tried to remember more than what should be possible.");
+    }
 
     // spiny
     if (HD == 16 && ancestor->type == MONS_ANCESTOR_KNIGHT)
