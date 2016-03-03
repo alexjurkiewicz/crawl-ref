@@ -5713,6 +5713,47 @@ void throw_monster_bits(const monster* mon)
     }
 }
 
+/*
+ * Spell that Ancestors can use.
+ *
+ * @param ancestor_type Which ancestor this spell is valid for.
+ * @param spell
+ * @unlock_hd Spell becomes available at this HD
+ * @capstone_option If non-zero, this spell is only available when capstone
+ *                  option 1 (a) or 2 (b) is chosen.
+ *
+ */
+struct ancestor_spell_data
+{
+	int unlock_hd;
+    spell_type spell;
+	int capstone_option;
+};
+
+static const map<monster_type, vector<ancestor_spell_data>> ancestor_spells =
+{
+    { MONS_ANCESTOR, {} },
+    { MONS_ANCESTOR_KNIGHT, {} },
+    { MONS_ANCESTOR_BATTLEMAGE, {
+        { 18, SPELL_LEHUDIBS_CRYSTAL_SPEAR, 1},
+        { 18, SPELL_CORROSIVE_BOLT, 2},
+        { 13, SPELL_IRON_SHOT, 0 },
+        { 10, SPELL_BOLT_OF_MAGMA, 0 },
+        { 8,  SPELL_THROW_ICICLE, 0 },
+        { 6,  SPELL_STONE_ARROW, 0 },
+        { 3,  SPELL_THROW_FROST, 0 },
+        { 1,  SPELL_MAGIC_DART, 0 },
+    } },
+    { MONS_ANCESTOR_HEXER, {
+        { 18, SPELL_MASS_CONFUSION, 2},
+        { 13, SPELL_ENGLACIATION, 0 },
+        { 10, SPELL_PETRIFY, 0 },
+        { 7,  SPELL_CONFUSE, 0 },
+        { 4,  SPELL_SLOW, 0 },
+        { 1,  SPELL_CORONA, 0 },
+    } },
+};
+
 /**
  * Set the correct spells for a given ancestor, corresponding to their HD and
  * type.
@@ -5730,41 +5771,22 @@ void set_ancestor_spells(monster &ancestor, bool notify)
 
     ancestor.spells = {};
 
-    // list of req HD and spells
-    // must be listed from most desirable to least
-    static const map<monster_type, vector<pair<int, spell_type>>> splist = {
-        { MONS_ANCESTOR, {} },
-        { MONS_ANCESTOR_KNIGHT, {} },
-        { MONS_ANCESTOR_BATTLEMAGE, {
-            { 18, SPELL_LEHUDIBS_CRYSTAL_SPEAR },
-            { 16, SPELL_CORROSIVE_BOLT },
-            { 13, SPELL_IRON_SHOT },
-            { 10, SPELL_BOLT_OF_MAGMA },
-            { 8,  SPELL_THROW_ICICLE },
-            { 6,  SPELL_STONE_ARROW },
-            { 3,  SPELL_THROW_FROST },
-            { 1,  SPELL_MAGIC_DART },
-        } },
-        { MONS_ANCESTOR_HEXER, {
-            { 17, SPELL_MASS_CONFUSION },
-            { 13, SPELL_ENGLACIATION },
-            { 10, SPELL_PETRIFY },
-            { 7,  SPELL_CONFUSE },
-            { 4,  SPELL_SLOW },
-            { 1,  SPELL_CORONA },
-        } },
-    };
     static const int MAX_SPELLS = 2;
     const int HD = ancestor.get_experience_level();
+    const int capstone_choice = you.props[HEPLIAKLQANA_CAPSTONE_CHOICE_KEY].get_int();
 
-    const vector<pair<int, spell_type>> spells_for_class
-        = *map_find(splist, ancestor.type);
-    for (auto spellspec : spells_for_class)
+    int spell_hd;
+    spell_type spell;
+    int choice;
+    for (auto spellspec : ancestor_spells.at(ancestor.type))
     {
-        if (spellspec.first <= HD)
+        spell_hd = spellspec.unlock_hd;
+        spell = spellspec.spell;
+        choice = spellspec.capstone_option;
+
+        if (spell_hd <= HD && (choice == 0 || choice == capstone_choice))
         {
-            ancestor.spells.emplace_back(spellspec.second, 30,
-                                         MON_SPELL_WIZARD);
+            ancestor.spells.emplace_back(spell, 30, MON_SPELL_WIZARD);
 
             if (ancestor.spells.size() >= MAX_SPELLS)
                 break;

@@ -51,6 +51,7 @@ const char * const GOZAG_SHOP_COST_KEY       = "gozag_shop_cost_%d";
 #define HEPLIAKLQANA_RESIST_FIRE_KEY "hepliaklqana_resist_fire"
 #define HEPLIAKLQANA_RESIST_COLD_KEY "hepliaklqana_resist_cold"
 #define HEPLIAKLQANA_SINV_KEY "hepliaklqana_sinv"
+#define HEPLIAKLQANA_CAPSTONE_CHOICE_KEY "hepliaklqana_capstone_choice"
 
 struct bolt;
 class stack_iterator;

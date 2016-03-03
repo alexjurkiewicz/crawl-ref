@@ -47,6 +47,7 @@
 #include "itemprop.h"
 #include "items.h"
 #include "libutil.h"
+#include "macro.h"
 #include "makeitem.h"
 #include "message.h"
 #include "misc.h"
@@ -1660,6 +1661,68 @@ static const hepliaklqana_unlock hepliaklqana_unlocks[] =
         HEPLIAKLQANA_SINV_KEY,
     },
 };
+
+/**
+ * Give the player a capstone item/ability choice for their ancestor.
+ */
+void do_hepliaklqana_capstone(monster_type mc, int hd)
+{
+    dprf("Running capstone for mc %u and hd %d", mc, hd);
+    // Capstone is only available when you reach HD18, once, and requires
+    // a classed ancestor.
+    if (hd < 18
+        || you.props[HEPLIAKLQANA_CAPSTONE_CHOICE_KEY].get_int() != 0
+        || mc == MONS_ANCESTOR)
+        return;
+
+    string choice1;
+    string choice2;
+    switch (mc)
+    {
+        case MONS_ANCESTOR_KNIGHT:
+        {
+            choice1 = "Demon Trident";
+            choice2 = "Broad Axe";
+            break;
+        }
+        case MONS_ANCESTOR_BATTLEMAGE:
+        {
+            choice1 = "knowledge of Lehudib's Crystal Spear";
+            choice2 = "knowledge of Corrosive Bolt";
+            break;
+        }
+        case MONS_ANCESTOR_HEXER:
+        {
+            choice1 = "antimagic dagger";
+            choice2 = "knowledge of Mass Confusion";
+            break;
+        }
+        default: // Player hasn't selected an ancestor type
+        {
+            dprf("Can't do a capstone, ancestor type is: %u", mc);
+            return;
+        }
+    }
+    simple_god_message("offers you a choice of memories.");
+    mprf_nojoin(MSGCH_PLAIN, "a - Your ancestor's %s", choice1.c_str()); // XXX capitalises a
+    mprf_nojoin(MSGCH_PLAIN, "b - Your ancestor's %s", choice2.c_str());
+    mprf_nojoin(MSGCH_PLAIN, "Remember which thingy?");
+    mprf_nojoin(MSGCH_PLAIN, ""); // XXX
+
+    const int choice = toalower(get_ch()) - 'a';
+    if (choice < 0 || choice > 1)
+    {
+        canned_msg(MSG_OK);
+        return;
+    }
+
+    if (choice == 0)
+        you.props[HEPLIAKLQANA_CAPSTONE_CHOICE_KEY] = 1;
+    else
+        you.props[HEPLIAKLQANA_CAPSTONE_CHOICE_KEY] = 2;
+    mprf("Your ancestor recalls their %s", choice == 0 ? choice1.c_str() : choice2.c_str());
+}
+
 /**
  * Update the ancestor's stats after the player levels up. Upgrade HD and HP,
  * and give appropriate messaging for that and any other notable upgrades
@@ -1697,6 +1760,8 @@ void upgrade_hepliaklqana_ancestor(bool quiet_force)
              ancestor->name(DESC_YOUR, true).c_str(),
              ancestor->pronoun(PRONOUN_POSSESSIVE, true).c_str());
     }
+
+    do_hepliaklqana_capstone(ancestor->type, hd);
 
     set_ancestor_spells(*ancestor, !quiet_force);
 
@@ -1778,12 +1843,16 @@ void upgrade_hepliaklqana_ancestor(bool quiet_force)
  */
 static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
 {
+    const int capstone_choice = you.props[HEPLIAKLQANA_CAPSTONE_CHOICE_KEY].get_int();
     switch (mc)
     {
         case MONS_ANCESTOR_HEXER:
             return HD < 16 ? WPN_DAGGER : WPN_QUICK_BLADE;
         case MONS_ANCESTOR_KNIGHT:
-            return HD < 8 ? WPN_LONG_SWORD : WPN_BROAD_AXE;
+            return HD >= 18 && capstone_choice == 1 ? WPN_DEMON_TRIDENT :
+                   HD >= 18 && capstone_choice == 2 ? WPN_BROAD_AXE :
+                   HD >= 8 ?                          WPN_WAR_AXE :
+                   WPN_LONG_SWORD;
         case MONS_ANCESTOR_BATTLEMAGE:
             return WPN_QUARTERSTAFF;
         default:
@@ -1800,16 +1869,17 @@ static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
  */
 static brand_type _hepliaklqana_weapon_brand(monster_type mc, int HD)
 {
+    const int capstone_choice = you.props[HEPLIAKLQANA_CAPSTONE_CHOICE_KEY].get_int();
     switch (mc)
     {
         case MONS_ANCESTOR_HEXER:
-            return HD < 9 ?    SPWPN_NORMAL :
-                   HD < 18 ?   SPWPN_DRAINING :
-                               SPWPN_ANTIMAGIC;
+            return HD >= 18 && capstone_choice == 1 ? SPWPN_ANTIMAGIC :
+                   HD >= 9 ?                          SPWPN_DRAINING :
+                                                      SPWPN_NORMAL;
         case MONS_ANCESTOR_KNIGHT:
-            return HD < 10 ?   SPWPN_NORMAL :
-                   HD < 18 ?   SPWPN_FLAMING :
-                               SPWPN_SPEED;
+            return HD >= 18 ? SPWPN_SPEED :
+                   HD >= 9 ?  SPWPN_FLAMING :
+                              SPWPN_NORMAL;
         case MONS_ANCESTOR_BATTLEMAGE:
         default:
             return SPWPN_NORMAL;

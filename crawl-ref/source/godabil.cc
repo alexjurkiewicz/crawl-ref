@@ -6876,6 +6876,7 @@ bool hepliaklqana_choose_ancestor_type(int ancestor_choice)
     if (ancestor)
     {
         ancestor->type = *ancestor_type;
+        do_hepliaklqana_capstone(ancestor->type, ancestor->get_hit_dice());
         give_weapon(ancestor, -1);
         ASSERT(ancestor->weapon());
         give_shield(ancestor);
