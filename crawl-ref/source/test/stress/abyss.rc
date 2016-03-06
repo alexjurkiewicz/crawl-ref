@@ -35,8 +35,8 @@ function ready()
     crawl.sendkeys("&Y" .. esc)
     crawl.sendkeys("&l27" .. eol .. "N")
     crawl.sendkeys("&A27" .. eol)
-    crawl.sendkeys("&@72 72 72" .. eol)
-    crawl.sendkeys("&o)demon whip" .. eol .. "chaos" .. eol)
+    crawl.sendkeys("&@125 125 125" .. eol)
+    crawl.sendkeys("&o)quick blade" .. eol .. "chaos" .. eol)
     crawl.sendkeys("g&o[boots" .. eol .. "running" .. eol)
     crawl.sendkeys("g&o[gold dragon armour" .. eol .. "" .. eol)
     crawl.sendkeys("g&o[large shield" .. eol .. "reflection" .. eol)
@@ -44,8 +44,14 @@ function ready()
     crawl.sendkeys("g&o[gloves" .. eol .. "strength" .. eol)
     crawl.sendkeys("g&o[cloak" .. eol .. "" .. eol)
     crawl.sendkeys("g&o=sustain" .. eol)
+    crawl.sendkeys("g&o=telepo" .. eol)
     --# somehow ga doesn't work... why?
-    crawl.sendkeys("gwcWdWeWfWgWhWiPj")
+    crawl.sendkeys("gwcWdWeWfWgWhWiPjPk")
+    crawl.sendkeys("g&%orb of zot" .. eol .. "g")
+    crawl.sendkeys("&!metabolic englaciation" .. eol .. "Y=saA")
+    crawl.sendkeys("&!spellforged servitor" .. eol .. "Y=saB")
+    crawl.sendkeys("&!chain lightning" .. eol .. "Y=saC")
+    crawl.sendkeys("&!tornado" .. eol .. "Y=saD")
     crawl.sendkeys("&tca9" .. eol .. "b9" .. eol .. esc)
     crawl.sendkeys("&tda2" .. eol .. esc)
     crawl.sendkeys("&tea12" .. eol .. esc)
@@ -70,14 +76,14 @@ function ready()
                    "debug.disable('hunger')" .. eol ..
                    "debug.disable('afflictions')" .. eol .. esc)
     crawl.call_dlua("dgn.set_random_mon_list('place:Abyss:$ /" ..
-                       "place:D:$ / place:Depths:$ /" ..
-                       "place:Orc:$ / place:Elf:$ / place:Lair:$ /" ..
-                       "place:Swamp:$ / place:Shoals:$ / place:Snake:$ /" ..
-                       "place:Spider:$ / place:Slime:$ / place:Vaults:$ /" ..
-                       "place:Crypt / place:Tomb:$ /" ..
-                       "place:Hell w:5 / place:Coc:$ w:5 / place:Tar:$ w:5 /" ..
-                       "place:Dis:$ w:5 / place:Geh:$ w:5 /" ..
-                       "place:Zot:$ w:20 / place:Pan w:20')")
+                    "place:D:$ / place:Depths:$ /" ..
+                    "place:Orc:$ / place:Elf:$ / place:Lair:$ /" ..
+                    "place:Swamp:$ / place:Shoals:$ / place:Snake:$ /" ..
+                    "place:Spider:$ / place:Slime:$ / place:Vaults:$ /" ..
+                    "place:Crypt / place:Tomb:$ /" ..
+                    "place:Hell w:5 / place:Coc:$ w:5 / place:Tar:$ w:5 /" ..
+                    "place:Dis:$ w:5 / place:Geh:$ w:5 /" ..
+                    "place:Zot:$ w:20 / place:Pan w:20')")
   end
   if you.turns() ~= last_turn then
     command = 1
