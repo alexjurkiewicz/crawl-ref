@@ -1443,13 +1443,13 @@ static const mutation_def mut_data[] =
    "When seriously injured, your bleeding wounds create thick armour. (AC +",
    "When seriously injured, your bleeding wounds create very thick armour. (AC +"},
 
-  {"You feel your blood thicken.",
-   "You feel your blood thicken.",
-   "You feel your blood thicken."},
+  {"Your blood congeals into armour.",
+   "Your blood armour thickens.",
+   "Your blood armour thickens."},
 
-  {"You feel your blood thin.",
-   "You feel your blood thin.",
-   "You feel your blood thin."},
+  {"Your blood armour liquifies and vanishes.",
+   "Your blood armour thins.",
+   "Your blood armour thins."},
 },
 
 { MUT_CAMOUFLAGE, 1, 3, mutflag::GOOD, true,

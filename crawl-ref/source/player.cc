@@ -6015,12 +6015,23 @@ static int _bone_armour_bonus()
  */
 int sanguine_armour_bonus()
 {
-    if (!you.duration[DUR_SANGUINE_ARMOUR])
+    const int level = player_mutation_level(MUT_SANGUINE_ARMOUR);
+    if (!level)
         return 0;
 
-    const int mut_lev = you.mutation[MUT_SANGUINE_ARMOUR];
-    // like iridescent, but somewhat moreso (when active)
-    return 300 + mut_lev * 300;
+    const int old_bonus = you.props[SANGUINE_AMOUNT_KEY].get_int();
+
+    const int pct = you.hp * 100 / you.hp_max;
+    const int max_bonus = 400 + level * 400;
+    const int amount = max_bonus * (100 - pct) / 100;
+
+    if (amount != old_bonus)
+    {
+        you.redraw_armour_class = true;
+        you.props[SANGUINE_AMOUNT_KEY] = amount;
+    }
+
+    return amount;
 }
 
 /**
@@ -8678,28 +8689,4 @@ void player_end_berserk()
     learned_something_new(HINT_POSTBERSERK);
     Hints.hints_events[HINT_YOU_ENCHANTED] = hints_slow;
     you.redraw_quiver = true; // Can throw again.
-}
-
-/**
- * Does the player have the Sanguine Armour mutation (not suppressed by a form)
- * while being at a low enough HP (<67%) for its benefits to trigger?
- *
- * @return Whether Sanguine Armour should be active.
- */
-bool sanguine_armour_valid()
-{
-    return you.hp <= you.hp_max * 2 / 3
-           && _mut_level(MUT_SANGUINE_ARMOUR, MUTACT_FULL);
-}
-
-/// Trigger sanguine armour, updating the duration & messaging as appropriate.
-void activate_sanguine_armour()
-{
-    const bool was_active = you.duration[DUR_SANGUINE_ARMOUR];
-    you.duration[DUR_SANGUINE_ARMOUR] = random_range(60, 100);
-    if (!was_active)
-    {
-        mpr("Your blood congeals into armour.");
-        you.redraw_armour_class = true;
-    }
 }

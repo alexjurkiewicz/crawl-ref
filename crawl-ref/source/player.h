@@ -37,6 +37,7 @@
 #define SAP_MAGIC_KEY "sap_magic_amount"
 #define TEMP_WATERWALK_KEY "temp_waterwalk"
 #define EMERGENCY_FLIGHT_KEY "emergency_flight"
+#define SANGUINE_AMOUNT_KEY "sanguine_armour_amount"
 
 // display/messaging breakpoints for penalties from Ru's MUT_HORROR
 #define HORROR_LVL_EXTREME  3
@@ -1044,9 +1045,6 @@ int get_real_mp(bool include_items);
 
 int get_contamination_level();
 string describe_contamination(int level);
-
-bool sanguine_armour_valid();
-void activate_sanguine_armour();
 
 void set_mp(int new_amount);
 

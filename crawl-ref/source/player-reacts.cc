@@ -848,12 +848,6 @@ static void _decrement_durations()
         _try_to_respawn_ancestor();
     }
 
-    const bool sanguine_armour_is_valid = sanguine_armour_valid();
-    if (sanguine_armour_is_valid)
-        activate_sanguine_armour();
-    else if (!sanguine_armour_is_valid && you.duration[DUR_SANGUINE_ARMOUR])
-        you.duration[DUR_SANGUINE_ARMOUR] = 1; // expire
-
     // these should be after decr_ambrosia, transforms, liquefying, etc.
     for (int i = 0; i < NUM_DURATIONS; ++i)
         if (duration_decrements_normally((duration_type) i))
