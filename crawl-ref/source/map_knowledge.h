@@ -46,15 +46,16 @@ struct cloud_info
 #define MAP_MOLDY            0x20000
 #define MAP_GLOWING_MOLDY    0x40000
 #define MAP_SANCTUARY_1      0x80000
-#define MAP_SANCTUARY_2     0x100000
-#define MAP_WITHHELD        0x200000
-#define MAP_LIQUEFIED       0x400000
-#define MAP_ORB_HALOED      0x800000
-#define MAP_UMBRAED        0x1000000
-#define MAP_QUAD_HALOED    0X4000000
-#define MAP_DISJUNCT       0X8000000
+#define MAP_SANCTUARY_2      0x100000
+#define MAP_WITHHELD         0x200000
+#define MAP_LIQUEFIED        0x400000
+#define MAP_ORB_HALOED       0x800000
+#define MAP_UMBRAED          0x1000000
+#define MAP_QUAD_HALOED      0X4000000
+#define MAP_DISJUNCT         0X8000000
+#define MAP_NEAR_SOUL_ANCHOR 0x10000000
 #if TAG_MAJOR_VERSION == 34
-#define MAP_HOT           0x10000000
+#define MAP_HOT              0x10000000
 #endif
 
 /*

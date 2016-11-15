@@ -242,6 +242,10 @@ enum class passive_t
 
     /// Hep reduces your max HP
     frail,
+
+
+    /// Wundvrond gives you a soul anchor
+    soul_anchor,
 };
 
 enum ru_interference
@@ -280,5 +284,6 @@ void dithmenos_shadow_throw(const dist &d, const item_def &item);
 void dithmenos_shadow_spell(bolt* orig_beam, spell_type spell);
 void uskayaw_prepares_audience();
 void uskayaw_bonds_audience();
+void move_soul_anchor();
 
 #endif

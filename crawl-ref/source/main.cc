@@ -1737,6 +1737,13 @@ static bool _prompt_stairs(dungeon_feature_type ygrd, bool down, bool shaft)
             return yesno("Really dive through this shaft in the floor?", true, 'n');
     }
 
+    if (you_worship(GOD_WUNDVROND)
+        && there_are_monsters_nearby(true, false, false))
+    {
+        mpr("You can't use stairs when monsters are nearby!");
+        return false;
+    }
+
     return true;
 }
 
@@ -2515,6 +2522,9 @@ void world_reacts()
     abyss_morph();
     apply_noises();
     handle_monsters(true);
+
+    if (you_worship(GOD_WUNDVROND))
+      move_soul_anchor();
 
     _check_banished();
 

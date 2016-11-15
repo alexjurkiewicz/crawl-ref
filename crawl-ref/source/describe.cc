@@ -2116,6 +2116,8 @@ void get_feature_desc(const coord_def &pos, describe_info &inf)
             area_desc += "\n" + getLongDescription("liquefied");
         if (disjunction_haloed(pos))
             area_desc += "\n" + getLongDescription("disjunction haloed");
+        if (near_soul_anchor(pos))
+            area_desc += "\n" + getLongDescription("near soul anchor");
 
         inf.body << area_desc;
     }

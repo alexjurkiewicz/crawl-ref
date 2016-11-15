@@ -3032,6 +3032,9 @@ static vector<string> _get_monster_desc_vector(const monster_info& mi)
     if (mi.is(MB_HALOED))
         descs.emplace_back("haloed");
 
+    if (mi.is(MB_NEAR_SOUL_ANCHOR))
+        descs.emplace_back("near soul anchor");
+
     if (mi.is(MB_UMBRAED))
         descs.emplace_back("umbra");
 
@@ -3108,6 +3111,9 @@ static string _get_monster_desc(const monster_info& mi)
 
     if (mi.is(MB_UMBRAED))
         text += pronoun + " is wreathed by an umbra.\n";
+
+    if (mi.is(MB_NEAR_SOUL_ANCHOR))
+        text += pronoun + " is within range of your soul anchor.\n";
 
     if (mi.intel() <= I_BRAINLESS)
         text += pronoun + " is mindless.\n";
@@ -3349,6 +3355,8 @@ static bool _print_cloud_desc(const coord_def where)
         areas.emplace_back("is wreathed by an umbra");
     if (liquefied(where))
         areas.emplace_back("is liquefied");
+    if (near_soul_anchor(where))
+        areas.emplace_back("is near your soul anchor");
     if (orb_haloed(where) || quad_haloed(where))
         areas.emplace_back("is covered in magical glow");
     if (disjunction_haloed(where))

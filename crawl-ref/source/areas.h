@@ -12,6 +12,7 @@ enum area_centre_type
     AREA_UMBRA,
     AREA_QUAD,
     AREA_DISJUNCTION,
+    AREA_SOUL_ANCHOR,
 #if TAG_MAJOR_VERSION == 34
     AREA_HOT,
 #endif
@@ -35,6 +36,9 @@ bool haloed(const coord_def& p);
 
 // or is the ground there liquefied?
 bool liquefied(const coord_def& p, bool check_actual = true);
+
+// or is the ground there near a soul anchor?
+bool near_soul_anchor(const coord_def& p);
 
 // Is it enlightened by the orb?
 bool orb_haloed(const coord_def& p);

@@ -231,6 +231,10 @@ static const char *divine_title[][8] =
     // Hepliaklqana -- memory/ancestry theme
     {"Damnatio Memoriae",       "Hazy",             "@Adj@ Child",              "Storyteller",
         "Brooding",           "Anamnesiscian",               "Grand Scion",                "Unforgettable"},
+
+    // Wundvrond -- soul anchor / steampunk nautical / Lovecraftian
+    {"Wundvrond 1",       "Wundvrond 2",             "Wundvrond 3",              "Wundvrond 4",
+        "Wundvrond 5",           "Wundvrond 6",               "Wundvrond 7",                "Wundvrond 8"},
 };
 COMPILE_CHECK(ARRAYSZ(divine_title) == NUM_GODS);
 

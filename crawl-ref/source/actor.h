@@ -353,6 +353,8 @@ public:
     virtual bool haloed() const;
     // Within an umbra?
     virtual bool umbraed() const;
+    // Near a soul anchor?
+    virtual bool near_soul_anchor() const;
 #if TAG_MAJOR_VERSION == 34
     // Being heated by a heat aura?
     virtual bool heated() const;
@@ -364,6 +366,8 @@ public:
     // Liquefying radius.
     virtual int liquefying_radius() const = 0;
     virtual int umbra_radius() const = 0;
+    // Soul anchor radius.
+    virtual int soul_anchor_radius() const = 0;
 #if TAG_MAJOR_VERSION == 34
     virtual int heat_radius() const = 0;
 #endif

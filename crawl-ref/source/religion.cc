@@ -2048,6 +2048,7 @@ string god_name(god_type which_god, bool long_name)
     case GOD_PAKELLAS:      return "Pakellas";
     case GOD_USKAYAW:       return "Uskayaw";
     case GOD_HEPLIAKLQANA:  return "Hepliaklqana";
+    case GOD_WUNDVROND:     return "Wundvrond";
     case GOD_JIYVA: // This is handled at the beginning of the function
     case GOD_ECUMENICAL:    return "an unknown god";
     case NUM_GODS:          return "Buggy";
@@ -3406,6 +3407,12 @@ static void _join_hepliaklqana()
                                     mg.mname.c_str()).c_str());
 }
 
+static void _join_wundvrond()
+{
+    you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY] = you.pos();
+    invalidate_agrid();
+}
+
 /// Setup when joining the gelatinous groupies of Jiyva.
 static void _join_jiyva()
 {
@@ -3507,6 +3514,7 @@ static const map<god_type, function<void ()>> on_join = {
     { GOD_RU, _join_ru },
     { GOD_TROG, _join_trog },
     { GOD_ZIN, _join_zin },
+    { GOD_WUNDVROND, _join_wundvrond },
 };
 
 void join_religion(god_type which_god)
@@ -4011,6 +4019,7 @@ void handle_god_time(int /*time_delta*/)
         case GOD_SIF_MUNA:
         case GOD_SHINING_ONE:
         case GOD_NEMELEX_XOBEH:
+        case GOD_WUNDVROND:
             if (one_chance_in(35))
                 lose_piety(1);
             break;

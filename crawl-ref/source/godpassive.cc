@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "areas.h" // invalidate_agrid
 #include "artefact.h"
 #include "art-enum.h"
 #include "branch.h"
@@ -27,6 +28,7 @@
 #include "message.h"
 #include "mon-cast.h"
 #include "mon-place.h"
+#include "mon-tentacle.h" // mons_is_tentacle_or_tentacle_segment
 #include "mon-util.h"
 #include "religion.h"
 #include "shout.h"
@@ -285,6 +287,11 @@ static const vector<god_passive> god_passives[NUM_GODS] =
     {
         { -1, passive_t::frail, "GOD siphons a part of your essence into your ancestor" },
         {  5, passive_t::transfer_drain, "drain nearby creatures when transferring your ancestor" },
+    },
+
+    // Wundvrond
+    {
+        { -1, passive_t::soul_anchor, "drop your soul when in sight of enemies" },
     },
 };
 
@@ -1466,4 +1473,47 @@ void uskayaw_bonds_audience()
     }
     else // Reset the timer because we didn't actually execute.
         you.props[USKAYAW_BOND_TIMER] = 0;
+}
+
+static bool _can_move_soul_anchor()
+{
+    const coord_def& center = you.pos();
+    const int radius = LOS_RADIUS;
+    for (radius_iterator ri(center, radius, C_SQUARE); ri; ++ri)
+    {
+        const monster* const mon = monster_at(*ri);
+
+        if (mon == nullptr
+            || mons_aligned(mon, &you)
+            || !mons_is_threatening(*mon)
+            || !you.see_cell(mon->pos())
+            || mons_is_tentacle_or_tentacle_segment(mon->type))
+        {
+            continue;
+        }
+        dprf("Monster prevents soul anchor from moving");
+				return false;
+    }
+    return true;
+}
+void move_soul_anchor()
+{
+    dprf("Checking soul anchor position");
+    coord_def pos = you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY];
+    if (pos != you.pos() && _can_move_soul_anchor())
+    {
+        dprf("Need to move the soul anchor");
+        if (pos.x > you.pos().x)
+          pos.x = pos.x - 1;
+        else if (pos.x < you.pos().x)
+          pos.x = pos.x + 1;
+
+        if (pos.y > you.pos().y)
+          pos.y = pos.y - 1;
+        else if (pos.y < you.pos().y)
+          pos.y = pos.y + 1;
+
+        you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY] = pos;
+        invalidate_agrid();
+    }
 }

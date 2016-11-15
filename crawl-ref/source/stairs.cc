@@ -782,6 +782,10 @@ void floor_transition(dungeon_feature_type how,
 
     you.clear_fearmongers();
 
+    // Update the soul anchor position
+    if (you_worship(GOD_WUNDVROND))
+      you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY] = you.pos();
+
     if (!wizard && !shaft)
         _update_travel_cache(old_level, stair_pos);
 

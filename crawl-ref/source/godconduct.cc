@@ -483,6 +483,8 @@ static peeve_map divine_peeves[] =
     peeve_map(),
     // GOD_HEPLIAKLQANA,
     peeve_map(),
+    // GOD_WUNDVROND,
+    peeve_map(),
 };
 
 string get_god_dislikes(god_type which_god)
@@ -994,6 +996,10 @@ static like_map divine_likes[] =
         } },
     },
     // GOD_HEPLIAKLQANA,
+    {
+        { DID_EXPLORATION, EXPLORE_RESPONSE },
+    },
+    // GOD_WUNDVROND,
     {
         { DID_EXPLORATION, EXPLORE_RESPONSE },
     },

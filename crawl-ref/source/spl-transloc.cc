@@ -37,6 +37,7 @@
 #include "orb.h"
 #include "output.h"
 #include "prompt.h"
+#include "religion.h" // you_worship
 #include "shout.h"
 #include "spl-util.h"
 #include "stash.h"
@@ -423,6 +424,13 @@ static bool _cell_vetoes_teleport(const coord_def cell, bool check_monsters = tr
 
     if (cell_is_solid(cell))
         return true;
+
+    if (you_worship(GOD_WUNDVROND)
+        && !wizard_tele
+        && !near_soul_anchor(cell))
+    {
+      return true;
+    }
 
     return is_feat_dangerous(grd(cell), true) && !wizard_tele;
 }

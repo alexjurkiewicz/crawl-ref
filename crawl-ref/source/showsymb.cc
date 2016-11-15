@@ -136,6 +136,8 @@ static unsigned short _cell_feat_show_colour(const map_cell& cell,
             colour = CYAN; // Silence but no holy/unholy
         else if (cell.flags & MAP_ORB_HALOED)
             colour = ETC_ORB_GLOW;
+        else if (cell.flags & MAP_NEAR_SOUL_ANCHOR)
+            colour = LIGHTGREEN;
         else if (cell.flags & MAP_QUAD_HALOED)
             colour = BLUE;
 #if TAG_MAJOR_VERSION == 34

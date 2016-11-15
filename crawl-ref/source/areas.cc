@@ -22,6 +22,7 @@
 #include "message.h"
 #include "mon-behv.h"
 #include "religion.h"
+#include "religion-enum.h"
 #include "stepdown.h"
 #include "terrain.h"
 #include "traps.h"
@@ -39,7 +40,7 @@ enum class areaprop
     UMBRA         = (1 << 7),
     QUAD          = (1 << 8),
     DISJUNCTION   = (1 << 9),
-    SOUL_AURA     = (1 << 10),
+    SOUL_ANCHOR   = (1 << 10),
 #if TAG_MAJOR_VERSION == 34
     HOT           = (1 << 11),
 #endif
@@ -86,6 +87,7 @@ void areas_actor_moved(const actor* act, const coord_def& oldpos)
         (you.entering_level
          || act->halo_radius() > -1 || act->silence_radius() > -1
          || act->liquefying_radius() > -1 || act->umbra_radius() > -1
+         || act->soul_anchor_radius() > -1
 #if TAG_MAJOR_VERSION == 34
          || act->heat_radius() > -1
 #endif
@@ -140,6 +142,17 @@ static void _actor_areas(actor *a)
 
         for (radius_iterator ri(a->pos(), r, C_SQUARE, LOS_DEFAULT); ri; ++ri)
             _set_agrid_flag(*ri, areaprop::UMBRA);
+        no_areas = false;
+    }
+
+    if ((r = a->soul_anchor_radius()) >= 0)
+    {
+        _agrid_centres.emplace_back(AREA_SOUL_ANCHOR, a->pos(), r);
+
+        coord_def const pos = you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY];
+        ASSERT(!(pos.x == 0 && pos.y == 0)); // Ensure initialised
+        for (radius_iterator ri(pos, r, C_SQUARE, LOS_NONE); ri; ++ri)
+            _set_agrid_flag(*ri, areaprop::SOUL_ANCHOR);
         no_areas = false;
     }
 
@@ -242,6 +255,8 @@ static area_centre_type _get_first_area(const coord_def& f)
         return AREA_HALO;
     if (a & areaprop::UMBRA)
         return AREA_UMBRA;
+    if (a & areaprop::SOUL_ANCHOR)
+        return AREA_SOUL_ANCHOR;
     // liquid is always applied; actual_liquid is on top
     // of this. If we find the first, we don't care about
     // the second.
@@ -649,6 +664,53 @@ bool liquefied(const coord_def& p, bool check_actual)
     // just recoloured for consistency
     else
         return _check_agrid_flag(p, areaprop::LIQUID);
+}
+
+//////////////////////
+// Soul Anchor
+//
+
+bool near_soul_anchor(const coord_def& p)
+{
+    if (!map_bounds(p))
+        return false;
+    if (!_agrid_valid)
+        _update_agrid();
+
+    return _check_agrid_flag(p, areaprop::SOUL_ANCHOR);
+}
+
+// Whether actor is near a soul anchor.
+bool actor::near_soul_anchor() const
+{
+    return ::near_soul_anchor(pos());
+}
+
+int player::soul_anchor_radius() const
+{
+    if (have_passive(passive_t::soul_anchor))
+    {
+      int r = 7 + piety_rank() * 2;
+      dprf("Current soul anchor radius is %d", r);
+      return r;
+    }
+    return -1;
+}
+
+int monster::soul_anchor_radius() const
+{
+    return -1;
+}
+
+bool valid_soul_anchor_ground(const coord_def& p, bool check_actual)
+{
+    if (!map_bounds(p))
+        return false;
+
+    if (!_agrid_valid)
+        _update_agrid();
+
+    return _check_agrid_flag(p, areaprop::SOUL_ANCHOR);
 }
 
 /////////////

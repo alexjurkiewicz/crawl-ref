@@ -1659,6 +1659,7 @@ enum dungeon_feature_type
     DNGN_ALTAR_PAKELLAS,
     DNGN_ALTAR_USKAYAW,
     DNGN_ALTAR_HEPLIAKLQANA,
+    DNGN_ALTAR_WUNDVROND,
     DNGN_ALTAR_ECUMENICAL,
 #endif
 
@@ -1727,6 +1728,7 @@ enum dungeon_feature_type
     DNGN_ALTAR_HEPLIAKLQANA,
 
     DNGN_ENDLESS_SALT,
+    DNGN_ALTAR_WUNDVROND,
 #endif
 
     NUM_FEATURES
@@ -2223,6 +2225,7 @@ enum god_type
     GOD_PAKELLAS,
     GOD_USKAYAW,
     GOD_HEPLIAKLQANA,
+    GOD_WUNDVROND,
     NUM_GODS,                          // always after last god
 
     GOD_RANDOM = 100,

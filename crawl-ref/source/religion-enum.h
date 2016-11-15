@@ -27,6 +27,9 @@ enum nemelex_gift_types
 /// chosen ancestor class (monster_type)
 #define HEPLIAKLQANA_ALLY_TYPE_KEY "hepliaklqana_ally_type"
 
+/// soul anchor location
+#define WUNDVROND_SOUL_ANCHOR_POS_KEY "wundvrond_soul_anchor_location"
+
 /// custom monster gender
 #define MON_GENDER_KEY "mon_gender"
 

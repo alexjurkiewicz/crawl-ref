@@ -167,6 +167,7 @@ enum monster_info_flags
     MB_NO_REWARD,
     MB_STILL_WINDS,
     MB_SLOWLY_DYING,
+    MB_NEAR_SOUL_ANCHOR,
     NUM_MB_FLAGS
 };
 

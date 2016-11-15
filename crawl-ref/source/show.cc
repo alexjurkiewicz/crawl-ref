@@ -130,6 +130,9 @@ static void _update_feat_at(const coord_def &gp)
     if (liquefied(gp, false))
         env.map_knowledge(gp).flags |= MAP_LIQUEFIED;
 
+    if (near_soul_anchor(gp))
+        env.map_knowledge(gp).flags |= MAP_NEAR_SOUL_ANCHOR;
+
     if (orb_haloed(gp))
         env.map_knowledge(gp).flags |= MAP_ORB_HALOED;
 
