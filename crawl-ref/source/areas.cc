@@ -701,7 +701,7 @@ int player::soul_anchor_radius() const
 {
     if (have_passive(passive_t::soul_anchor))
     {
-      int r = 4 + (you.piety/20 * 2);
+      int r = 4 + you.piety/20;
       dprf("Current soul anchor radius is %d", r);
       return r;
     }
