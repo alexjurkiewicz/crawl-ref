@@ -1528,8 +1528,8 @@ void move_soul_anchor() // TODO: rename
 }
 int wundvrond_ev_bonus()
 {
-    if (you_worship(GOD_WUNDVROND))
-        return max(0, (you.piety/15 - soul_anchor_distance(you.pos())));
+    if (you_worship(GOD_WUNDVROND) && you.near_soul_anchor())
+        return you.piety/10 - soul_anchor_distance(you.pos());
     else
         return 0;
 }
