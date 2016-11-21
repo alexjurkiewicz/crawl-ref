@@ -691,7 +691,7 @@ int soul_anchor_distance(const coord_def& p)
     return distance2(p, anchor);
 }
 
-// Whether actor is near a soul anchor.
+// Whether actor is within range of a soul anchor.
 bool actor::near_soul_anchor() const
 {
     return ::near_soul_anchor(pos());
@@ -711,17 +711,6 @@ int player::soul_anchor_radius() const
 int monster::soul_anchor_radius() const
 {
     return -1;
-}
-
-bool valid_soul_anchor_ground(const coord_def& p, bool check_actual)
-{
-    if (!map_bounds(p))
-        return false;
-
-    if (!_agrid_valid)
-        _update_agrid();
-
-    return _check_agrid_flag(p, areaprop::SOUL_ANCHOR);
 }
 
 /////////////
