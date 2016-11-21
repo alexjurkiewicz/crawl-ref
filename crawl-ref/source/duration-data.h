@@ -30,6 +30,11 @@ static void _redraw_armour()
     you.redraw_armour_class = true;
 }
 
+static void _redraw_evasion()
+{
+    you.redraw_evasion = true;
+}
+
 // properties of the duration.
 enum duration_flags : uint32_t
 {
@@ -537,6 +542,12 @@ static const duration_def duration_data[] =
     { DUR_SPWPN_PROTECTION, 0, "", "protection aura", "",
       "Your weapon is exuding a protective aura.", D_NO_FLAGS,
       {{ "", _redraw_armour }}},
+    { DUR_WUNDVROND_EV,
+      LIGHTBLUE, "",
+      "enhanced evasion", "wundvrond ev",
+      "Your nearby soul increases your evasion.", D_NO_FLAGS,
+      {{ "Your soul is too far to help your evasion.",  _redraw_evasion },
+         { "Your soul-boosted evasion fades." , 1 }}, 6},
 
     // The following are visible in wizmode only, or are handled
     // specially in the status lights and/or the % or @ screens.

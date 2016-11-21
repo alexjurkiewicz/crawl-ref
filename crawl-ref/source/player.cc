@@ -2207,6 +2207,8 @@ static int _player_evasion_bonuses()
     if (player_mutation_level(MUT_SLOW_REFLEXES))
         evbonus -= player_mutation_level(MUT_SLOW_REFLEXES) * 3;
 
+    evbonus += wundvrond_ev_bonus();
+
     return evbonus;
 }
 

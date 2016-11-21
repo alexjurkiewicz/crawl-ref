@@ -499,7 +499,7 @@ static bool _boosted_ac()
 
 static bool _boosted_ev()
 {
-    return you.duration[DUR_AGILITY];
+    return you.duration[DUR_AGILITY] || wundvrond_ev_bonus() > 0;
 }
 
 static bool _boosted_sh()

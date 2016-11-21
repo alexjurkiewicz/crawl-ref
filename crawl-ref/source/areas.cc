@@ -680,6 +680,17 @@ bool near_soul_anchor(const coord_def& p)
     return _check_agrid_flag(p, areaprop::SOUL_ANCHOR);
 }
 
+int soul_anchor_distance(const coord_def& p)
+{
+    if (!map_bounds(p))
+        return false;
+    if (!_agrid_valid)
+        _update_agrid();
+
+    coord_def const anchor = you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY];
+    return distance2(p, anchor);
+}
+
 // Whether actor is near a soul anchor.
 bool actor::near_soul_anchor() const
 {

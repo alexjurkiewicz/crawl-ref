@@ -1496,7 +1496,7 @@ static bool _can_move_soul_anchor()
     }
     return true;
 }
-void move_soul_anchor()
+void move_soul_anchor() // TODO: rename
 {
     dprf("Checking soul anchor position");
     coord_def pos = you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY];
@@ -1516,4 +1516,11 @@ void move_soul_anchor()
         you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY] = pos;
         invalidate_agrid();
     }
+}
+int wundvrond_ev_bonus()
+{
+    if (you_worship(GOD_WUNDVROND))
+        return max(0, (you.piety/15 - soul_anchor_distance(you.pos())));
+    else
+        return 0;
 }

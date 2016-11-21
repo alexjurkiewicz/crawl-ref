@@ -1924,6 +1924,7 @@ enum duration_type
     DUR_NO_CAST,
     DUR_CHANNEL_ENERGY,
     DUR_SPWPN_PROTECTION,
+    DUR_WUNDVROND_EV,
     NUM_DURATIONS
 };
 

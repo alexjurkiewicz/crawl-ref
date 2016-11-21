@@ -285,5 +285,6 @@ void dithmenos_shadow_spell(bolt* orig_beam, spell_type spell);
 void uskayaw_prepares_audience();
 void uskayaw_bonds_audience();
 void move_soul_anchor();
+int wundvrond_ev_bonus();
 
 #endif

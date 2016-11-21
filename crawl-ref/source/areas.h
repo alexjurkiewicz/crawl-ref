@@ -40,6 +40,9 @@ bool liquefied(const coord_def& p, bool check_actual = true);
 // or is the ground there near a soul anchor?
 bool near_soul_anchor(const coord_def& p);
 
+// Distance from soul anchor (TODO: move to a better place in this file)
+int soul_anchor_distance(const coord_def& p);
+
 // Is it enlightened by the orb?
 bool orb_haloed(const coord_def& p);
 

@@ -1118,6 +1118,8 @@ void player_reacts()
 
     if (you.props[EMERGENCY_FLIGHT_KEY].get_bool())
         _handle_emergency_flight();
+
+    you.redraw_evasion = true; // for wundvrond ev bonus
 }
 
 void extract_manticore_spikes(const char* endmsg)
