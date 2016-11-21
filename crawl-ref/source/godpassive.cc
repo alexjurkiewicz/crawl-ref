@@ -1520,7 +1520,7 @@ void move_soul_anchor() // TODO: rename
 
     if (cloud_type_at(oldpos) == CLOUD_SOUL)
         delete_cloud(oldpos);
-    if (pos != you.pos() && you.see_cell(pos))
+    if (pos != you.pos() && you.see_cell(pos) && !cell_is_solid(pos))
     {
         dprf("Creating soul cloud");
         place_cloud(CLOUD_SOUL, pos, 10, &you);
