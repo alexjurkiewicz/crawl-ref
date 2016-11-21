@@ -281,6 +281,11 @@ static const cloud_data clouds[] = {
       BEAM_NONE, {},                              // beam & damage
       true,                                       // opacity
     },
+    // CLOUD_SOUL,
+    { "your soul",  nullptr,                      // terse, verbose name
+      ETC_AIR,                                    // colour
+      { TILE_CLOUD_WHITE_SMOKE, CTVARY_NONE },    // tile
+    },
 };
 COMPILE_CHECK(ARRAYSZ(clouds) == NUM_CLOUD_TYPES);
 
@@ -504,6 +509,8 @@ static int _cloud_dissipation_rate(const cloud_struct &cloud)
             if (!feat_is_watery(grd(cloud.pos)))
                 return cloud.decay;
             break;
+        case CLOUD_SOUL:
+            return 0;
         default:
             break;
     }

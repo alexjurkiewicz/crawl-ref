@@ -1499,7 +1499,8 @@ static bool _can_move_soul_anchor()
 void move_soul_anchor() // TODO: rename
 {
     dprf("Checking soul anchor position");
-    coord_def pos = you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY];
+    const coord_def oldpos = you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY];
+    coord_def pos = oldpos;
     if (pos != you.pos() && _can_move_soul_anchor())
     {
         dprf("Need to move the soul anchor");
@@ -1515,6 +1516,14 @@ void move_soul_anchor() // TODO: rename
 
         you.props[WUNDVROND_SOUL_ANCHOR_POS_KEY] = pos;
         invalidate_agrid();
+    }
+
+    if (cloud_type_at(oldpos) == CLOUD_SOUL)
+        delete_cloud(oldpos);
+    if (pos != you.pos() && you.see_cell(pos))
+    {
+        dprf("Creating soul cloud");
+        place_cloud(CLOUD_SOUL, pos, 10, &you);
     }
 }
 int wundvrond_ev_bonus()
