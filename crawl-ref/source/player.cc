@@ -266,11 +266,6 @@ bool check_moveto_terrain(const coord_def& p, const string &move_verb,
         }
     }
 
-    if (you_worship(GOD_WUNDVROND) && !near_soul_anchor(p))
-    {
-      mpr("You can't move that far away from your soul anchor!");
-      return false;
-    }
     return true;
 }
 

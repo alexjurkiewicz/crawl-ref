@@ -1740,8 +1740,15 @@ static bool _prompt_stairs(dungeon_feature_type ygrd, bool down, bool shaft)
     if (you_worship(GOD_WUNDVROND)
         && there_are_monsters_nearby(true, false, false))
     {
-        mpr("You can't use stairs when monsters are nearby!");
-        return false;
+        if (yesno("Really use stairs? Your soul is still separated from your body!", true, 'n'))
+        {
+            // 1 - xl/5 (max 5)
+            rot_hp(random_range(1,
+                                min(1, you.experience_level / 5)));
+            return true;
+        }
+        else
+          return false;
     }
 
     return true;

@@ -274,6 +274,16 @@ static void _maybe_melt_armour()
     }
 }
 
+static void _handle_soul_anchor_distance()
+{
+    // XXX this lets players instantly finish any slow
+    // might need to create a special wundvrond-only duration
+    if (!near_soul_anchor(you.pos()))
+        you.increase_duration(DUR_SLOW, 10, 10);
+    else
+        you.duration[DUR_SLOW] = 0;
+}
+
 /**
  * How much horror does the player character feel in the current situation?
  *
@@ -474,6 +484,8 @@ void player_reacts_to_monsters()
     _update_cowardice();
     if (you_worship(GOD_USKAYAW))
         _handle_uskayaw_time(you.time_taken);
+    if (you_worship(GOD_WUNDVROND))
+        _handle_soul_anchor_distance();
 }
 
 static bool _check_recite()
