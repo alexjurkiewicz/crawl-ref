@@ -4019,7 +4019,6 @@ void handle_god_time(int /*time_delta*/)
         case GOD_SIF_MUNA:
         case GOD_SHINING_ONE:
         case GOD_NEMELEX_XOBEH:
-        case GOD_WUNDVROND:
             if (one_chance_in(35))
                 lose_piety(1);
             break;
@@ -4045,6 +4044,7 @@ void handle_god_time(int /*time_delta*/)
             // We handle Uskayaw elsewhere because this func gets called rarely
         case GOD_GOZAG:
         case GOD_XOM:
+        case GOD_WUNDVROND: // XXX temporary
             // Gods without normal piety do nothing each tick.
             return;
 
