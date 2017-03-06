@@ -26,6 +26,7 @@
 #endif
 
 #include "abyss.h"
+#include "achievements.h"
 #include "act-iter.h"
 #include "areas.h"
 #include "branch.h"
@@ -919,6 +920,9 @@ static void _grab_followers()
 
         if (mons_is_mons_class(fol, MONS_DOWAN) && fol->alive())
             dowan = fol;
+
+        if (fol->type == MONS_BAT)
+            celebrate(achievement::streaker);
 
         if (fol->wont_attack() && !mons_can_use_stairs(*fol))
         {

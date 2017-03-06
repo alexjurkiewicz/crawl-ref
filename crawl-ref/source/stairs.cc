@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "abyss.h"
+#include "achievements.h"
 #include "act-iter.h"
 #include "areas.h"
 #include "bloodspatter.h"
@@ -30,6 +31,7 @@
 #include "message.h"
 #include "misc.h"
 #include "mon-death.h"
+#include "nearby-danger.h"
 #include "notes.h"
 #include "orb-type.h"
 #include "output.h"
@@ -700,7 +702,11 @@ void floor_transition(dungeon_feature_type how,
             if (branches[branch].entry_message)
                 mpr(branches[branch].entry_message);
             else if (branch != BRANCH_ABYSS) // too many messages...
+            {
                 mprf("Welcome to %s!", branches[branch].longname);
+                if (branch == BRANCH_LAIR)
+                    celebrate(achievement::enter_lair);
+            }
         }
 
         // Did we leave a notable branch for the first time?
@@ -729,6 +735,21 @@ void floor_transition(dungeon_feature_type how,
         // Entered a regular (non-portal) branch from above.
         if (!going_up && parent_branch(branch) == old_level.branch)
             enter_branch(branch, old_level);
+    }
+
+    // Temple of Doom achievement
+    if (player_in_branch(old_level.branch)
+        && going_up
+        && is_connected_branch(you.where_are_you)
+        && branches[you.where_are_you].numlevels -1 == you.depth
+        // Bit hacky, but all connected branches have only one rune
+        && branches[you.where_are_you].runes.size() == 1
+        && you.runes[branches[you.where_are_you].runes.front()]
+        // Check the achievement to avoid iterating unneccessarily
+        && !have_achievement(achievement::temple_of_doom)
+        && get_nearby_monsters(false, false, true).size() >= 4)
+    {
+        celebrate(achievement::temple_of_doom);
     }
 
     // Warn Formicids if they cannot shaft here

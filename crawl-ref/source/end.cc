@@ -10,6 +10,7 @@
 #include <cerrno>
 
 #include "abyss.h"
+#include "achievements.h"
 #include "chardump.h"
 #include "colour.h"
 #include "crash.h"
@@ -229,12 +230,22 @@ NORETURN void end_game(scorefile_entry &se, int hiscore_index)
 
     _delete_files();
 
+    if (se.get_death_type() == KILLED_BY_WINNING)
+        celebrate(achievement::yavp);
+
     // death message
     if (se.get_death_type() != KILLED_BY_LEAVING
         && se.get_death_type() != KILLED_BY_QUITTING
         && se.get_death_type() != KILLED_BY_WINNING)
     {
         canned_msg(MSG_YOU_DIE);
+        if (you.religion != GOD_NO_GOD
+            && !you_worship(GOD_XOM)
+            && !you_worship(GOD_GOZAG)
+            && piety_rank() == NUM_PIETY_STARS)
+        {
+            celebrate(achievement::saint);
+        }
         xom_death_message((kill_method_type) se.get_death_type());
 
         switch (you.religion)

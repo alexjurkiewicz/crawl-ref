@@ -1,6 +1,7 @@
 OBJECTS = \
 ability.o \
 abyss.o \
+achievements.o \
 acquire.o \
 act-iter.o \
 actor-los.o \

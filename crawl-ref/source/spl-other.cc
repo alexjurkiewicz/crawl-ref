@@ -8,6 +8,7 @@
 
 #include "spl-other.h"
 
+#include "achievements.h"
 #include "act-iter.h"
 #include "delay.h"
 #include "env.h"
@@ -65,6 +66,9 @@ spret_type cast_sublimation_of_blood(int pow, bool fail)
         else
             mpr("Your attempt to draw power from your own body fails.");
     }
+
+    if (success && you.hp == 1)
+        celebrate(achievement::desperate_power);
 
     return success ? SPRET_SUCCESS : SPRET_ABORT;
 }

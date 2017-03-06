@@ -7,6 +7,7 @@
 
 #include "mon-poly.h"
 
+#include "achievements.h"
 #include "artefact.h"
 #include "attitude-change.h"
 #include "delay.h"
@@ -502,6 +503,9 @@ bool monster_polymorph(monster* mons, monster_type targetc,
         return simple_monster_message(*mons, " looks momentarily different.");
 
     change_monster_type(mons, targetc);
+
+    if (oldc == MONS_SIGMUND)
+        celebrate(achievement::pigmund);
 
     bool can_see = you.can_see(*mons);
 

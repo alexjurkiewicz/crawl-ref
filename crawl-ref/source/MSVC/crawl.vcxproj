@@ -217,6 +217,7 @@ perl.exe "util/gen-cflg.pl" compflag.h "&lt;UNKNOWN&gt;" "&lt;UNKNOWN&gt;"
   <ItemGroup>
     <ClCompile Include="..\ability.cc" />
     <ClCompile Include="..\abyss.cc" />
+    <ClCompile Include="..\achievements.cc" />
     <ClCompile Include="..\acquire.cc" />
     <ClCompile Include="..\act-iter.cc" />
     <ClCompile Include="..\actor-los.cc" />
@@ -612,6 +613,9 @@ perl.exe "util/gen-cflg.pl" compflag.h "&lt;UNKNOWN&gt;" "&lt;UNKNOWN&gt;"
     <ClInclude Include="..\ability-type.h" />
     <ClInclude Include="..\ability.h" />
     <ClInclude Include="..\abyss.h" />
+    <ClInclude Include="..\achievement-data.h" />
+    <ClInclude Include="..\achievement-type.h" />
+    <ClInclude Include="..\achievements.h" />
     <ClInclude Include="..\ac-type.h" />
     <ClInclude Include="..\acquire.h" />
     <ClInclude Include="..\act-iter.h" />

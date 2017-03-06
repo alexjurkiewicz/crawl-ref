@@ -7,6 +7,7 @@
 
 #include "mon-death.h"
 
+#include "achievements.h"
 #include "act-iter.h"
 #include "areas.h"
 #include "arena.h"
@@ -625,6 +626,8 @@ void record_monster_defeat(const monster* mons, killer_type killer)
         milestone += get_ghost_description(mi, true);
         milestone += ".";
         mark_milestone("ghost", milestone);
+        if (get_ghost_description(mi, true).find("Be of Trog.") != string::npos)
+            celebrate(achievement::cleaning_crew);
     }
     if (mons_is_or_was_unique(*mons) && !testbits(mons->flags, MF_SPECTRALISED))
     {
@@ -2049,10 +2052,27 @@ item_def* monster_die(monster* mons, killer_type killer,
         crawl_state.cancel_cmd_repeat();
     }
 
-    if (killer == KILL_YOU)
+    if (killer == KILL_YOU || killer == KILL_YOU_MISSILE)
+    {
         crawl_state.cancel_cmd_repeat();
+        celebrate(achievement::first_blood);
+    }
 
     const bool pet_kill = _is_pet_kill(killer, killer_index);
+
+    if (pet_kill
+        && (mons->type == MONS_HOUND
+            || mons->type == MONS_WOLF
+            || mons->type == MONS_WARG))
+    {
+        const monster_type pet_killer = menv[killer_index].type;
+        if (pet_killer == MONS_HOUND
+            || pet_killer == MONS_WOLF
+            || pet_killer == MONS_WARG)
+        {
+            celebrate(achievement::dogfight);
+        }
+    }
 
     bool did_death_message = false;
 
@@ -2074,6 +2094,8 @@ item_def* monster_die(monster* mons, killer_type killer,
                                    MSGCH_MONSTER_DAMAGE, MDAM_DEAD);
             silent = true;
         }
+        if (killer == KILL_YOU || killer == KILL_YOU_MISSILE)
+            celebrate(achievement::foolminant_prism);
     }
     else if (mons->type == MONS_FIRE_VORTEX
              || mons->type == MONS_SPATIAL_VORTEX

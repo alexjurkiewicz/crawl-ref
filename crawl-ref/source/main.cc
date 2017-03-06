@@ -30,6 +30,7 @@
 
 #include "ability.h"
 #include "abyss.h"
+#include "achievements.h"
 #include "acquire.h"
 #include "act-iter.h"
 #include "adjust.h"
@@ -3471,8 +3472,17 @@ static void _move_player(coord_def move)
             auto wall_jump_direction = (you.pos() - targ).sgn();
             auto wall_jump_landing_spot = (you.pos() + wall_jump_direction
                                            + wall_jump_direction);
+
+            const monster* jumped_monster = monster_at(you.pos()
+                                                       + wall_jump_direction);
             move_player_to_grid(wall_jump_landing_spot, false);
             wu_jian_wall_jump_effects(initial_position);
+
+            if (jumped_monster
+                && jumped_monster->type == MONS_ORB_OF_DESTRUCTION)
+            {
+                celebrate(achievement::daredevil);
+            }
         }
 
         // Now it is safe to apply the swappee's location effects. Doing

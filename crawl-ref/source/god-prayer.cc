@@ -4,6 +4,7 @@
 
 #include <cmath>
 
+#include "achievements.h"
 #include "artefact.h"
 #include "butcher.h"
 #include "coordit.h"
@@ -90,7 +91,11 @@ static bool _pray_ecumenical_altar()
                             god_name(altar_god).c_str());
             you.turn_is_over = true;
             if (!you_worship(altar_god))
+            {
                 join_religion(altar_god);
+                if (you_worship(GOD_XOM))
+                    celebrate(achievement::xomlucky);
+            }
             else
                 return true;
         }

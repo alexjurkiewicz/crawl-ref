@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "achievements.h"
 #include "areas.h"
 #include "art-enum.h"
 #include "attitude-change.h"
@@ -243,6 +244,13 @@ bool melee_attack::handle_phase_attempted()
     }
 
     attack_occurred = true;
+
+    if (attacker->is_player()
+        && weapon
+        && weapon->sub_type == FOOD_BREAD_RATION)
+    {
+        celebrate(achievement::hop);
+    }
 
     // Check for player practicing dodging
     if (defender->is_player())
@@ -894,6 +902,8 @@ bool melee_attack::attack()
         if (ev_margin >= 0)
         {
             bool cont = handle_phase_hit();
+            if (attacker->is_player())
+                reset_celebration(achievement::strike_out);
 
             attacker_sustain_passive_damage();
 
@@ -906,7 +916,11 @@ bool melee_attack::attack()
             }
         }
         else
+        {
             handle_phase_dodged();
+            if (attacker->is_player())
+                celebrate(achievement::strike_out);
+        }
     }
 
     // Remove sanctuary if - through some attack - it was violated.

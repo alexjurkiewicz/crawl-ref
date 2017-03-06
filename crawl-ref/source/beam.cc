@@ -16,6 +16,7 @@
 #include <iostream>
 #include <set>
 
+#include "achievements.h"
 #include "act-iter.h"
 #include "areas.h"
 #include "attitude-change.h"
@@ -5335,6 +5336,8 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
                 // becoming confused.
                 if (simple_monster_message(*mon, " appears confused."))
                     obvious_effect = true;
+                if (mon->type == MONS_CRAZY_YIUF)
+                    celebrate(achievement::clarity);
             }
         }
         return MON_AFFECTED;
