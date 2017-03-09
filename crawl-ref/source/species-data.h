@@ -366,6 +366,23 @@ static const map<species_type, species_def> species_data =
       SK_BOWS, SK_CROSSBOWS, SK_SLINGS },
 } },
 
+{ SP_WRIXLAN, {
+    "Wx",
+    "Wrixlan", nullptr, nullptr,
+    SPF_NO_HAIR,
+    0, 0, 0, 3,
+    MONS_BARACHIAN,
+    HT_LAND, US_ALIVE, SIZE_MEDIUM,
+    7, 7, 7, // 18
+    { STAT_STR, STAT_INT, STAT_DEX }, 4,
+    { }, // real muts
+    { }, // fake mut descriptions
+    { }, // fake mut short descs
+    { JOB_WARPER, JOB_WIZARD, JOB_CONJURER, },
+    { SK_MACES_FLAILS, SK_AXES, SK_POLEARMS, SK_LONG_BLADES, SK_STAVES,
+      SK_BOWS, SK_CROSSBOWS, SK_SLINGS },
+} },
+
 { SP_GHOUL, {
     "Gh",
     "Ghoul", "Ghoulish", nullptr,

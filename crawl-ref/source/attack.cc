@@ -40,6 +40,7 @@
 #include "stepdown.h"
 #include "stringutil.h"
 #include "transform.h"
+#include "wrixlan-aspect.h"
 #include "xom.h"
 
 /*
@@ -1438,6 +1439,22 @@ bool attack::apply_poison_damage_brand()
     return false;
 }
 
+int _current_wrixlan_brand() {
+    switch(static_cast<wrixlan_aspect>(you.props["wrixlan_aspect"].get_int()))
+    {
+        case wrixlan_aspect::fire:
+            return SPWPN_FLAMING;
+        case wrixlan_aspect::ice:
+            return SPWPN_FREEZING;
+        case wrixlan_aspect::air:
+            return SPWPN_ELECTROCUTION;
+        case wrixlan_aspect::earth:
+            return SPWPN_VORPAL;
+        default:
+            die("Unhandled aspect");
+    }
+}
+
 bool attack::apply_damage_brand(const char *what)
 {
     bool brand_was_known = false;
@@ -1449,7 +1466,11 @@ bool attack::apply_damage_brand(const char *what)
 
     special_damage = 0;
     obvious_effect = false;
-    brand = damage_brand == SPWPN_CHAOS ? random_chaos_brand() : damage_brand;
+    wrixlan_aspect aspect = static_cast<wrixlan_aspect>(you.props["wrixlan_aspect"].get_int());
+    if (you.species == SP_WRIXLAN && aspect != wrixlan_aspect::none)
+        brand = _current_wrixlan_brand();
+    else
+        brand = damage_brand == SPWPN_CHAOS ? random_chaos_brand() : damage_brand;
 
     if (brand != SPWPN_FLAMING && brand != SPWPN_FREEZING
         && brand != SPWPN_ELECTROCUTION && brand != SPWPN_VAMPIRISM

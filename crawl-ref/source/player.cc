@@ -80,6 +80,7 @@
 #include "travel.h"
 #include "view.h"
 #include "wizard-option-type.h"
+#include "wrixlan-aspect.h"
 #include "xom.h"
 
 static int _bone_armour_bonus();
@@ -2726,6 +2727,178 @@ void recalc_and_scale_hp()
     you.hit_points_regeneration = hp % 100;
 }
 
+static bool _maybe_evolve_draconian()
+{
+    if (you.experience_level >= 7)
+    {
+  #if TAG_MAJOR_VERSION == 34
+        // Hack to evade mottled draconians.
+        do
+        {
+            you.species = static_cast<species_type>(
+                           random_range(SP_FIRST_NONBASE_DRACONIAN,
+                                        SP_LAST_NONBASE_DRACONIAN));
+        }
+        while (you.species == SP_MOTTLED_DRACONIAN);
+  #endif
+  #if TAG_MAJOR_VERSION > 34
+        you.species = static_cast<species_type>(
+                           random_range(SP_FIRST_NONBASE_DRACONIAN,
+                                        SP_LAST_NONBASE_DRACONIAN));
+  #endif
+
+        // We just changed our aptitudes, so some skills may now
+        // be at the wrong level (with negative progress); if we
+        // print anything in this condition, we might trigger a
+        // --More--, a redraw, and a crash (#6376 on Mantis).
+        //
+        // Hence we first fix up our skill levels silently (passing
+        // do_level_up = false) but save the old values; then when
+        // we want the messages later, we restore the old skill
+        // levels and call check_skill_level_change() again, this
+        // time passing do_update = true.
+
+        uint8_t saved_skills[NUM_SKILLS];
+        for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
+        {
+            saved_skills[sk] = you.skills[sk];
+            check_skill_level_change(sk, false);
+        }
+        // The player symbol depends on species.
+        update_player_symbol();
+  #ifdef USE_TILE
+        init_player_doll();
+  #endif
+        mprf(MSGCH_INTRINSIC_GAIN,
+             "Your scales start taking on %s colour.",
+             article_a(scale_type(you.species)).c_str());
+
+        // Produce messages about skill increases/decreases. We
+        // restore one skill level at a time so that at most the
+        // skill being checked is at the wrong level.
+        for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
+        {
+            const int oldapt = species_apt(sk, SP_BASE_DRACONIAN);
+            const int newapt = species_apt(sk, you.species);
+            if (oldapt != newapt)
+            {
+                mprf(MSGCH_INTRINSIC_GAIN, "You learn %s %s%s.",
+                     skill_name(sk),
+                     abs(oldapt - newapt) > 1 ? "much " : "",
+                     oldapt > newapt ? "slower" : "quicker");
+            }
+
+            you.skills[sk] = saved_skills[sk];
+            check_skill_level_change(sk);
+        }
+
+        // Tell the player about their new species
+        for (auto &mut : fake_mutations(you.species, false))
+            mprf(MSGCH_INTRINSIC_GAIN, "%s", mut.c_str());
+
+        // needs to be done early here, so HP doesn't look rotted
+        // when we redraw the screen
+        _gain_and_note_hp_mp();
+
+        redraw_screen();
+
+        return true; // updated_maxhp
+    }
+    return false; // updated_maxhp
+}
+
+static void _maybe_mutate_demonspawn()
+{
+    bool gave_message = false;
+    int level = 0;
+    mutation_type first_body_facet = NUM_MUTATIONS;
+
+    for (const player::demon_trait trait : you.demonic_traits)
+    {
+        if (is_body_facet(trait.mutation))
+        {
+            if (first_body_facet < NUM_MUTATIONS
+                && trait.mutation != first_body_facet)
+            {
+                if (you.experience_level == level)
+                {
+                    mprf(MSGCH_MUTATION, "You feel monstrous as "
+                         "your demonic heritage exerts itself.");
+                    mark_milestone("monstrous", "discovered their "
+                                   "monstrous ancestry!");
+                }
+                break;
+            }
+
+            if (first_body_facet == NUM_MUTATIONS)
+            {
+                first_body_facet = trait.mutation;
+                level = trait.level_gained;
+            }
+        }
+    }
+
+    for (const player::demon_trait trait : you.demonic_traits)
+    {
+        if (trait.level_gained == you.experience_level)
+        {
+            if (!gave_message)
+            {
+                mprf(MSGCH_INTRINSIC_GAIN,
+                     "Your demonic ancestry asserts itself...");
+
+                gave_message = true;
+            }
+            perma_mutate(trait.mutation, 1, "demonic ancestry");
+        }
+    }
+}
+
+void _maybe_randomise_wrixlan_aspect()
+{
+    // Only every 4th level
+    if (you.experience_level % 4 != 0)
+        return;
+
+    wrixlan_aspect old_aspect = static_cast<wrixlan_aspect>(you.props["wrixlan_aspect"].get_int());
+
+    wrixlan_aspect new_aspect;
+    do {
+        new_aspect = random_choose(wrixlan_aspect::fire, wrixlan_aspect::ice, wrixlan_aspect::air, wrixlan_aspect::earth);
+    } while (new_aspect == old_aspect);
+
+    you.props["wrixlan_aspect"] = static_cast<int>(new_aspect);
+
+    switch(new_aspect)
+    {
+        case wrixlan_aspect::fire:
+        {
+            mpr("You gain the fire aspect.");
+            break;
+        }
+        case wrixlan_aspect::ice:
+        {
+            mpr("You gain the ice aspect.");
+            break;
+        }
+        case wrixlan_aspect::air:
+        {
+            mpr("You gain the air aspect.");
+            break;
+        }
+        case wrixlan_aspect::earth:
+        {
+            mpr("You gain the earth aspect.");
+            break;
+        }
+        default:
+        {
+            die("Unhandled aspect!");
+            break;
+        }
+    }
+}
+
 /**
  * Handle the effects from a player's change in XL.
  * @param aux                     A string describing the cause of the level
@@ -2840,133 +3013,22 @@ void level_change(bool skip_attribute_increase)
                 break;
 
             case SP_BASE_DRACONIAN:
-                if (you.experience_level >= 7)
-                {
-#if TAG_MAJOR_VERSION == 34
-                    // Hack to evade mottled draconians.
-                    do
-                    {
-                        you.species = static_cast<species_type>(
-                                       random_range(SP_FIRST_NONBASE_DRACONIAN,
-                                                    SP_LAST_NONBASE_DRACONIAN));
-                    }
-                    while (you.species == SP_MOTTLED_DRACONIAN);
-#endif
-#if TAG_MAJOR_VERSION > 34
-                    you.species = static_cast<species_type>(
-                                       random_range(SP_FIRST_NONBASE_DRACONIAN,
-                                                    SP_LAST_NONBASE_DRACONIAN));
-#endif
-
-                    // We just changed our aptitudes, so some skills may now
-                    // be at the wrong level (with negative progress); if we
-                    // print anything in this condition, we might trigger a
-                    // --More--, a redraw, and a crash (#6376 on Mantis).
-                    //
-                    // Hence we first fix up our skill levels silently (passing
-                    // do_level_up = false) but save the old values; then when
-                    // we want the messages later, we restore the old skill
-                    // levels and call check_skill_level_change() again, this
-                    // time passing do_update = true.
-
-                    uint8_t saved_skills[NUM_SKILLS];
-                    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
-                    {
-                        saved_skills[sk] = you.skills[sk];
-                        check_skill_level_change(sk, false);
-                    }
-                    // The player symbol depends on species.
-                    update_player_symbol();
-#ifdef USE_TILE
-                    init_player_doll();
-#endif
-                    mprf(MSGCH_INTRINSIC_GAIN,
-                         "Your scales start taking on %s colour.",
-                         article_a(scale_type(you.species)).c_str());
-
-                    // Produce messages about skill increases/decreases. We
-                    // restore one skill level at a time so that at most the
-                    // skill being checked is at the wrong level.
-                    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
-                    {
-                        const int oldapt = species_apt(sk, SP_BASE_DRACONIAN);
-                        const int newapt = species_apt(sk, you.species);
-                        if (oldapt != newapt)
-                        {
-                            mprf(MSGCH_INTRINSIC_GAIN, "You learn %s %s%s.",
-                                 skill_name(sk),
-                                 abs(oldapt - newapt) > 1 ? "much " : "",
-                                 oldapt > newapt ? "slower" : "quicker");
-                        }
-
-                        you.skills[sk] = saved_skills[sk];
-                        check_skill_level_change(sk);
-                    }
-
-                    // Tell the player about their new species
-                    for (auto &mut : fake_mutations(you.species, false))
-                        mprf(MSGCH_INTRINSIC_GAIN, "%s", mut.c_str());
-
-                    // needs to be done early here, so HP doesn't look rotted
-                    // when we redraw the screen
-                    _gain_and_note_hp_mp();
+                if (_maybe_evolve_draconian())
                     updated_maxhp = true;
-
-                    redraw_screen();
-                }
                 break;
 
             case SP_DEMONSPAWN:
             {
-                bool gave_message = false;
-                int level = 0;
-                mutation_type first_body_facet = NUM_MUTATIONS;
-
-                for (const player::demon_trait trait : you.demonic_traits)
-                {
-                    if (is_body_facet(trait.mutation))
-                    {
-                        if (first_body_facet < NUM_MUTATIONS
-                            && trait.mutation != first_body_facet)
-                        {
-                            if (you.experience_level == level)
-                            {
-                                mprf(MSGCH_MUTATION, "You feel monstrous as "
-                                     "your demonic heritage exerts itself.");
-                                mark_milestone("monstrous", "discovered their "
-                                               "monstrous ancestry!");
-                            }
-                            break;
-                        }
-
-                        if (first_body_facet == NUM_MUTATIONS)
-                        {
-                            first_body_facet = trait.mutation;
-                            level = trait.level_gained;
-                        }
-                    }
-                }
-
-                for (const player::demon_trait trait : you.demonic_traits)
-                {
-                    if (trait.level_gained == you.experience_level)
-                    {
-                        if (!gave_message)
-                        {
-                            mprf(MSGCH_INTRINSIC_GAIN,
-                                 "Your demonic ancestry asserts itself...");
-
-                            gave_message = true;
-                        }
-                        perma_mutate(trait.mutation, 1, "demonic ancestry");
-                    }
-                }
-
+                _maybe_mutate_demonspawn();
                 break;
             }
 
             case SP_FELID:
                 _felid_extra_life();
+                break;
+
+            case SP_WRIXLAN:
+                _maybe_randomise_wrixlan_aspect();
                 break;
 
             default:
