@@ -541,6 +541,12 @@ public:
     {
         return "Blade " + blade_parts(true);
     }
+
+    int get_base_unarmed_damage() const override
+    {
+        const int pow = calc_spell_power(SPELL_BLADE_HANDS, true);
+        return div_rand_round(pow, 5) + 7;
+    }
 };
 
 class FormStatue : public Form
