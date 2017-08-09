@@ -732,6 +732,13 @@ public:
     }
 
     bool can_offhand_punch() const override { return true; }
+
+    int get_base_unarmed_damage() const override
+    {
+        const int pow = calc_spell_power(SPELL_DRAGON_FORM, true);
+        return div_rand_round(pow, 3);
+    }
+
 };
 
 class FormLich : public Form
