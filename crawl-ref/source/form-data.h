@@ -67,7 +67,7 @@ static const form_entry formdata[] =
     TRAN_SPIDER, MONS_SPIDER, "Spider", "spider-form", "spider",
     "a venomous arachnid creature.",
     EQF_PHYSICAL, MR_VUL_POISON,
-    FormDuration(10, PS_DOUBLE, 60), 0, 5, SIZE_TINY, 10,
+    FormDuration(10, PS_DOUBLE, 60), 0, 5, SIZE_CHARACTER, 10,
     2, 0, 0, true, 10, 10, 5,
     SPWPN_VENOM, LIGHTGREEN, "Fangs", ANIMAL_VERBS,
     FC_DEFAULT, FC_FORBID, FC_FORBID, true, false,
