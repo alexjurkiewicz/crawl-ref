@@ -9,7 +9,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_SLOW,
     SPELL_SUBLIMATION_OF_BLOOD,
     SPELL_CONJURE_FLAME,
-    SPELL_CALL_CANINE_FAMILIAR,
 },
 
 #if TAG_MAJOR_VERSION == 34
@@ -162,7 +161,6 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Book of Callings
     SPELL_SUMMON_SMALL_MAMMAL,
     SPELL_CALL_IMP,
-    SPELL_CALL_CANINE_FAMILIAR,
     SPELL_SUMMON_GUARDIAN_GOLEM,
     SPELL_SUMMON_LIGHTNING_SPIRE,
     SPELL_SUMMON_ICE_BEAST,
@@ -335,7 +333,6 @@ static const vector<spell_type> spellbook_templates[] =
 },
 
 {   // Book of Beasts
-    SPELL_CALL_CANINE_FAMILIAR,
     SPELL_SUMMON_ICE_BEAST,
     SPELL_SUMMON_MANA_VIPER,
     SPELL_SUMMON_HYDRA,
