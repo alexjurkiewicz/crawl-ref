@@ -3164,7 +3164,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_SUMMON_LIGHTNING_SPIRE, "Summon Lightning Spire",
     SPTYP_SUMMONING | SPTYP_AIR,
-    SPFLAG_TARGET | SPFLAG_NOT_SELF | SPFLAG_NEUTRAL,
+    SPFLAG_TARGET | SPFLAG_NOT_SELF | SPFLAG_NEUTRAL | SPFLAG_MONSTER,
     4,
     100,
     2, 2,
