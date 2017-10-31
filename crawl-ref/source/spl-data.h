@@ -1635,7 +1635,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_MONSTROUS_MENAGERIE, "Monstrous Menagerie",
     SPTYP_SUMMONING,
-    SPFLAG_MONS_ABJURE,
+    SPFLAG_MONS_ABJURE | SPFLAG_MONSTER,
     7,
     200,
     -1, -1,
