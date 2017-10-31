@@ -1285,7 +1285,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_SHADOW_CREATURES, "Shadow Creatures",
     SPTYP_SUMMONING,
-    SPFLAG_MONS_ABJURE,
+    SPFLAG_MONS_ABJURE | SPFLAG_MONSTER,
     6,
     0,
     -1, -1,

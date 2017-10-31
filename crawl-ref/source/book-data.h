@@ -43,7 +43,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_AURA_OF_ABJURATION,
     SPELL_SUMMON_DEMON,
     SPELL_SUMMON_FOREST,
-    SPELL_SHADOW_CREATURES,
 },
 
 {   // Book of Fire
@@ -318,7 +317,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_HIBERNATION,
     SPELL_SILENCE,
     SPELL_DARKNESS,
-    SPELL_SHADOW_CREATURES,
 },
 
 {   // Book of Alchemy
