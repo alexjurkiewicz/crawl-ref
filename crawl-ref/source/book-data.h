@@ -43,7 +43,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_AURA_OF_ABJURATION,
     SPELL_SUMMON_DEMON,
     SPELL_SUMMON_FOREST,
-    SPELL_SUMMON_MANA_VIPER,
     SPELL_SHADOW_CREATURES,
 },
 
@@ -332,7 +331,6 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Beasts
     SPELL_SUMMON_ICE_BEAST,
-    SPELL_SUMMON_MANA_VIPER,
     SPELL_SUMMON_HYDRA,
 },
 

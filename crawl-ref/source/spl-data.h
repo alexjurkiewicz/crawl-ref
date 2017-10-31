@@ -3300,7 +3300,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_SUMMON_MANA_VIPER, "Summon Mana Viper",
     SPTYP_SUMMONING | SPTYP_HEXES,
-    SPFLAG_MONS_ABJURE,
+    SPFLAG_MONS_ABJURE | SPFLAG_MONSTER,
     5,
     100,
     -1, -1,
