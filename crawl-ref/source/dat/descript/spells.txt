@@ -1450,7 +1450,7 @@ Calls forth a swarm of death scarabs.
 %%%%
 Summon Small Mammal spell
 
-Summons a small mammal to the caster's aid.
+Summons one or several small mammals to the caster's aid.
 %%%%
 Summon Spectral Orcs spell
 

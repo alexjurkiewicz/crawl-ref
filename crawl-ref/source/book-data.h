@@ -277,7 +277,6 @@ static const vector<spell_type> spellbook_templates[] =
 },
 
 {   // Book of Party Tricks
-    SPELL_SUMMON_BUTTERFLIES,
     SPELL_APPORTATION,
     SPELL_BECKONING,
     SPELL_TUKIMAS_DANCE,
@@ -336,7 +335,6 @@ static const vector<spell_type> spellbook_templates[] =
 },
 
 {   // Book of Beasts
-    SPELL_SUMMON_BUTTERFLIES,
     SPELL_CALL_CANINE_FAMILIAR,
     SPELL_SUMMON_ICE_BEAST,
     SPELL_SUMMON_MANA_VIPER,

@@ -385,7 +385,7 @@ static const struct spell_desc spelldata[] =
     SPTYP_SUMMONING,
     SPFLAG_NONE,
     1,
-    25,
+    200,
     -1, -1,
     1, 0,
     TILEG_SUMMON_SMALL_MAMMAL,
@@ -1431,12 +1431,12 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_SUMMON_BUTTERFLIES, "Summon Butterflies",
     SPTYP_SUMMONING,
-    SPFLAG_NONE,
+    SPFLAG_MONSTER,
     1,
     100,
     -1, -1,
     1, 0,
-    TILEG_SUMMON_BUTTERFLIES,
+    TILEG_ERROR,
 },
 
 #if TAG_MAJOR_VERSION == 34
