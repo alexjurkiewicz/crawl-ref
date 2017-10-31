@@ -1151,13 +1151,13 @@ static bool _summon_common_demon(int pow, god_type god, int spell, bool quiet)
 
 static bool _summon_greater_demon(int pow, god_type god, int spell, bool quiet)
 {
-    monster_type mon = summon_any_demon(RANDOM_DEMON_GREATER);
+    monster_type mon = summon_any_demon(RANDOM_DEMON_GREATEST);
 
-    const bool charmed = (random2(pow) > 5);
-    const bool friendly = (charmed && mons_demon_tier(mon) == 2);
+    // 0-90% chance of being friendly (as opposed to temporarily charmed)
+    const bool friendly = x_chance_in_y(pow, 220);
 
     return _summon_demon_wrapper(pow, god, spell, mon,
-                                 4, friendly, charmed, quiet);
+                                 4, friendly, true, quiet);
 }
 
 bool summon_demon_type(monster_type mon, int pow, god_type god,
