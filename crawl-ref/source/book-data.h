@@ -129,7 +129,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_OLGREBS_TOXIC_RADIANCE,
     SPELL_SUMMON_FOREST,
     SPELL_HYDRA_FORM,
-    SPELL_SUMMON_HYDRA,
 },
 
 #if TAG_MAJOR_VERSION > 34
@@ -329,7 +328,6 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Beasts
     SPELL_SUMMON_ICE_BEAST,
-    SPELL_SUMMON_HYDRA,
 },
 
 {   // Book of Annihilations
