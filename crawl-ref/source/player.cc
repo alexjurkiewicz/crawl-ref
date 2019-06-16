@@ -27,6 +27,7 @@
 #include "cloud.h"
 #include "coordit.h"
 #include "delay.h"
+#include "describe.h"
 #include "dgn-overview.h"
 #include "dgn-event.h"
 #include "directn.h"
@@ -519,7 +520,7 @@ void move_player_to_grid(const coord_def& p, bool stepped)
 }
 
 void dab_on_them_haters()
-{ 
+{
     you.turn_is_over = true;
     const bool dab_master = you.has_mutation(MUT_DAB_MASTER);
     bool dabbed = false;
@@ -2753,6 +2754,25 @@ static void _gain_and_note_hp_mp()
     take_note(Note(NOTE_XP_LEVEL_CHANGE, you.experience_level, 0, buf));
 }
 
+static void _update_protean_size(size_type oldsize)
+{
+    const size_type size = species_size(you.species, PSIZE_TORSO);
+    mprf("You change size from %s to %s", get_size_adj(oldsize), get_size_adj(size));
+    for (int i = EQ_FIRST_EQUIP; i < NUM_EQUIP; ++i)
+    {
+        if (you_can_wear(static_cast<equipment_type>(i)) == MB_FALSE
+            && you.equip[i] != -1)
+        {
+            mprf("%s fall%s away!",
+                 you.inv[you.equip[i]].name(DESC_YOUR).c_str(),
+                 you.inv[you.equip[i]].quantity > 1 ? "" : "s");
+            // Unwear items without the usual processing.
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+        }
+    }
+}
+
 /**
  * Calculate max HP changes and scale current HP accordingly.
  */
@@ -2762,6 +2782,7 @@ void calc_hp(bool scale, bool set)
     // We can reduce errors by a factor of 100 by using partial hp we have.
     int oldhp = you.hp;
     int old_max = you.hp_max;
+    size_type oldsize = species_size(you.species, PSIZE_TORSO);
 
     you.hp_max = get_real_hp(true, true);
 
@@ -2784,6 +2805,11 @@ void calc_hp(bool scale, bool set)
     {
         dprf("HP changed: %d/%d -> %d/%d", oldhp, old_max, you.hp, you.hp_max);
         you.redraw_hit_points = true;
+    }
+    if (old_max != you.hp_max && you.get_mutation_level(MUT_PROTEAN_BODY)
+        && species_size(you.species, PSIZE_TORSO) != oldsize)
+    {
+            _update_protean_size(oldsize);
     }
 }
 
@@ -3996,6 +4022,10 @@ int get_real_hp(bool trans, bool rotted)
         hitp = hitp * 4 / 5;
 #endif
 
+    // Protean body adds a flat 5hp per artefact/mutation
+    if (you.get_mutation_level(MUT_PROTEAN_BODY))
+        hitp += protean_bonus_hpmp();
+
     return max(1, hitp);
 }
 
@@ -4025,6 +4055,10 @@ int get_real_mp(bool include_items)
 
     // This is our "rotted" base, applied after multipliers
     enp += you.mp_max_adj;
+
+    // Protean body adds a flat 5mp per artefact/mutation
+    if (you.get_mutation_level(MUT_PROTEAN_BODY))
+        enp += protean_bonus_hpmp();
 
     // Now applied after scaling so that power items are more useful -- bwr
     if (include_items)
@@ -5879,6 +5913,15 @@ int sanguine_armour_bonus()
     const int mut_lev = you.get_mutation_level(MUT_SANGUINE_ARMOUR);
     // like iridescent, but somewhat moreso (when active)
     return 300 + mut_lev * 300;
+}
+
+int protean_bonus_hpmp()
+{
+    const int items = inv_artefact_count();
+    const int muts = you.how_mutated(false, true);
+    // dprf("Protean bonus amount items %d + muts %d = %d",
+    //      items, muts, items+muts);
+    return items + muts;
 }
 
 /**

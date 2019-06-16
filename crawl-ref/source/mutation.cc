@@ -21,6 +21,7 @@
 #include "coordit.h"
 #include "dactions.h"
 #include "delay.h"
+#include "describe.h"
 #include "english.h"
 #include "env.h"
 #include "god-abil.h"
@@ -1759,6 +1760,12 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
         }
     }
 
+    if (you.get_mutation_level(MUT_PROTEAN_BODY))
+    {
+        calc_hp(true, false);
+        calc_mp();
+    }
+
 #ifdef USE_TILE_LOCAL
     if (your_talents(false).size() != old_talents)
     {
@@ -1877,6 +1884,12 @@ static bool _delete_single_mutation_level(mutation_type mutat,
     }
     else
         take_note(Note(NOTE_LOSE_MUTATION, mutat, you.mutation[mutat], reason));
+
+    if (you.get_mutation_level(MUT_PROTEAN_BODY))
+    {
+        calc_hp(true, false);
+        calc_mp();
+    }
 
     if (you.hp <= 0)
     {
@@ -2227,6 +2240,16 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     {
         ostringstream ostr;
         ostr << mdef.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
+        result = ostr.str();
+    }
+    else if (mut == MUT_PROTEAN_BODY)
+    {
+        const int hpmp = protean_bonus_hpmp();
+        const string size = get_size_adj(species_size(you.species, PSIZE_TORSO));
+        ostringstream ostr;
+        ostr << mdef.have[level - 1]
+            << "+" << hpmp * 5 << "hp/mp, "
+            << size << " size).";
         result = ostr.str();
     }
     else if (!ignore_player && you.species == SP_FELID && mut == MUT_CLAWS)
