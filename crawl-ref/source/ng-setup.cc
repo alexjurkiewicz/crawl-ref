@@ -155,7 +155,8 @@ item_def* newgame_make_item(object_class_type base,
     }
 
     if ((item.base_type == OBJ_WEAPONS && can_wield(&item, false, false)
-        || item.base_type == OBJ_ARMOUR && can_wear_armour(item, false, false))
+         || (item.base_type == OBJ_ARMOUR && can_wear_armour(item, false, false))
+         || item.base_type == OBJ_JEWELLERY)
         && you.equip[get_item_slot(item)] == -1)
     {
         you.equip[get_item_slot(item)] = slot;
