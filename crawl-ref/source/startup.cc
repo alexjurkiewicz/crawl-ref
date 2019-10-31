@@ -215,6 +215,16 @@ static void _spawn_caveperson_dog()
     create_monster(pet_data, false);
 }
 
+static void _fly_argon()
+{
+    if (you.species == SP_ARGON)
+    {
+        you.attribute[ATTR_PERM_FLIGHT] = 1;
+        you.attribute[ATTR_FLIGHT_UNCANCELLABLE] = true;
+        float_player();
+    }
+}
+
 /** KILL_RESETs all monsters in LOS.
 *
 *  Doesn't affect monsters behind glass, only those that would
@@ -362,10 +372,18 @@ static void _post_init(bool newc)
 
         _spawn_caveperson_dog();
 
-        if (you.species == SP_FAERIE_DRAGON)
+        // Start certain species flying
+        switch (you.species)
         {
+        case SP_ARGON:
+            you.attribute[ATTR_FLIGHT_UNCANCELLABLE] = true;
+            // deliberate fall-through
+        case SP_FAERIE_DRAGON:
             you.attribute[ATTR_PERM_FLIGHT] = 1;
             float_player();
+            break;
+        default:
+            break;
         }
     }
 
