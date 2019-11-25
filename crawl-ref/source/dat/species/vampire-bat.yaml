@@ -1,0 +1,48 @@
+enum: SP_VAMPIRE_BAT
+monster: MONS_BAT
+name: Vampire Bat
+difficulty: Intermediate
+aptitudes:
+  xp: 1
+  hp: -3
+  mp_mod: 0
+  mr: 5
+  short_blades: False
+  long_blades: False
+  axes: False
+  maces_and_flails: False
+  polearms: False
+  staves: False
+  slings: False
+  bows: False
+  crossbows: False
+  throwing: False
+  armour: False
+  dodging: 1
+  stealth: 2
+  shields: False
+  spellcasting: -1
+  conjurations: -1
+  hexes: 3
+  charms: 1
+  necromancy: 1
+  translocations: -1
+  transmutations: 1
+  evocations: -1
+  invocations: -1
+size: little
+str: 4
+int: 10
+dex: 12
+levelup_stat_frequency: 5
+levelup_stats:
+  - int
+  - dex
+mutations:
+  1:
+    MUT_FANGS: 3
+    MUT_VAMPIRE_FANGS: 1
+    MUT_ACUTE_VISION: 1
+    MUT_BIG_WINGS: 1
+recommended_jobs:
+  - JOB_NECROMANCER
