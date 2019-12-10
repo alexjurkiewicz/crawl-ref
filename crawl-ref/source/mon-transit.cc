@@ -319,17 +319,11 @@ static bool _mons_can_follow_player_from(const monster &mons,
     if (!monster_habitable_grid(&mons, DNGN_FLOOR))
         return false;
 
-    // Only non-wandering friendly monsters or those actively
-    // seeking the player will follow up/down stairs.
-    if (!mons.friendly()
-          && (!mons_is_seeking(mons) || mons.foe != MHITYOU)
-        || mons.foe == MHITNOT)
-    {
+    if (!mons.friendly())
         return false;
-    }
 
-    // Unfriendly monsters must be directly adjacent to follow.
-    if (!mons.friendly() && (mons.pos() - from).rdist() > 1)
+    // Only non-wandering friendly monsters will follow
+    if (mons_is_seeking(mons) && mons.foe != MHITYOU)
         return false;
 
     // Monsters that can't use stairs can still be marked as followers
