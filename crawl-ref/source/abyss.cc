@@ -417,7 +417,7 @@ void banished(const string &who, const int power)
                       + _who_banished(who);
     take_note(Note(NOTE_MESSAGE, 0, 0, what), true);
 
-    stop_delay(true);
+    stop_delay();
     run_animation(ANIMATION_BANISH, UA_BRANCH_ENTRY, false);
     push_features_to_abyss();
     floor_transition(DNGN_ENTER_ABYSS, orig_terrain(you.pos()),
@@ -1735,7 +1735,7 @@ void abyss_teleport()
     _write_abyssal_features();
     grd(you.pos()) = _veto_dangerous_terrain(grd(you.pos()));
 
-    stop_delay(true);
+    stop_delay();
     forget_map(false);
     clear_excludes();
     gozag_detect_level_gold(false);

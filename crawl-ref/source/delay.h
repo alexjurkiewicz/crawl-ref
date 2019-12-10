@@ -741,7 +741,7 @@ shared_ptr<Delay> start_delay(Args&&... args)
     return delay;
 }
 
-void stop_delay(bool stop_stair_travel = false);
+void stop_delay();
 bool you_are_delayed();
 shared_ptr<Delay> current_delay();
 void handle_delay();

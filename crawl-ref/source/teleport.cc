@@ -43,7 +43,7 @@ bool player::blink_to(const coord_def& dest, bool quiet)
     if (!quiet)
         canned_msg(MSG_YOU_BLINK);
 
-    stop_delay(true);
+    stop_delay();
 
     const coord_def origin = pos();
     move_player_to_grid(dest, false);

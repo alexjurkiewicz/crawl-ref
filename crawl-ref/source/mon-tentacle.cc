@@ -915,7 +915,7 @@ void move_solo_tentacle(monster* tentacle)
 
         // Interrupt stair travel and passwall.
         if (constrictee->is_player())
-            stop_delay(true);
+            stop_delay();
     }
     tentacle->clear_invalid_constrictions();
 
@@ -1110,7 +1110,7 @@ void move_child_tentacles(monster* mons)
 
             // Interrupt stair travel and passwall.
             if (constrictee->is_player())
-                stop_delay(true);
+                stop_delay();
         }
         tentacle->clear_invalid_constrictions();
 

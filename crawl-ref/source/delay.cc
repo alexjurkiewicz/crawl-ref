@@ -283,7 +283,7 @@ bool RevivifyDelay::try_interrupt()
     return false;
 }
 
-void stop_delay(bool stop_stair_travel)
+void stop_delay()
 {
     if (you.delay_queue.empty())
         return;
@@ -305,11 +305,8 @@ void stop_delay(bool stop_stair_travel)
     if (!delay->is_butcher())
         _clear_pending_delays();
 
-    if ((!delay->is_stair_travel() || stop_stair_travel)
-        && delay->try_interrupt())
-    {
+    if (delay->try_interrupt())
         _pop_delay();
-    }
 }
 
 bool you_are_delayed()
@@ -1074,14 +1071,20 @@ static bool _should_stop_activity(Delay* delay,
     if (ai == activity_interrupt::see_monster && is_sanctuary(you.pos()))
         return false;
 
-    auto curr = current_delay(); // Not necessarily what we were passed.
-
+    if ((ai == activity_interrupt::hp_loss
+         || ai == activity_interrupt::teleport)
+        && player_stair_delay())
+    {
+        return true;
+    }
     if ((ai == activity_interrupt::see_monster
          || ai == activity_interrupt::mimic)
         && player_stair_delay())
     {
         return false;
     }
+
+    auto curr = current_delay(); // Not necessarily what we were passed.
 
     if (ai == activity_interrupt::full_hp || ai == activity_interrupt::full_mp
         || ai == activity_interrupt::ancestor_hp)
@@ -1396,8 +1399,7 @@ bool interrupt_activity(activity_interrupt ai,
     if (_should_stop_activity(delay.get(), ai, at))
     {
         _monster_warning(ai, at, delay, msgs_buf);
-        // Teleport stops stair delays.
-        stop_delay(ai == activity_interrupt::teleport);
+        stop_delay();
 
         return true;
     }

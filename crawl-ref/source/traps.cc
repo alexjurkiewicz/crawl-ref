@@ -353,7 +353,7 @@ bool player_caught_in_net()
         // item yet
         you.attribute[ATTR_HELD] = 1;
 
-        stop_delay(true); // even stair delays
+        stop_delay(); // even stair delays
         return true;
     }
     return false;

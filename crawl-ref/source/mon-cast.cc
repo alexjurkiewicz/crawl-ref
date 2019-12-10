@@ -2458,7 +2458,7 @@ static bool _seal_doors_and_stairs(const monster* warden,
                     actor_at(dc)->move_to_pos(newpos);
                     if (act->is_player())
                     {
-                        stop_delay(true);
+                        stop_delay();
                         player_pushed = true;
                     }
                     veto_spots.push_back(newpos);

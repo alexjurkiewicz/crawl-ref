@@ -696,7 +696,7 @@ static bool _teleport_player(bool wizard_tele, bool teleportitis,
         _place_tloc_cloud(old_pos);
 
         move_player_to_grid(newpos, false);
-        stop_delay(true);
+        stop_delay();
     }
 
     _handle_teleport_update(large_change, old_pos);

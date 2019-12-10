@@ -439,7 +439,7 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
                 mgrd(act->pos()) = NON_MONSTER;
             act->moveto(coord_def());
             if (act->is_player())
-                stop_delay(true);
+                stop_delay();
         }
 
     // Need to check available positions again, as the damage call could

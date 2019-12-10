@@ -1177,7 +1177,7 @@ void wind_blast(actor* agent, int pow, coord_def target, bool card)
                 {
                     act->move_to_pos(newpos);
                     if (act->is_player())
-                        stop_delay(true);
+                        stop_delay();
                     --push;
                     pushed = true;
                 }
@@ -1195,7 +1195,7 @@ void wind_blast(actor* agent, int pow, coord_def target, bool card)
                         {
                             act->move_to_pos(*di);
                             if (act->is_player())
-                                stop_delay(true);
+                                stop_delay();
 
                             --push;
                             pushed = true;

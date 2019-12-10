@@ -1063,7 +1063,7 @@ void ouch(int dam, kill_method_type death_type, mid_t source, const char *aux,
         you.lives--;
         you.pending_revival = true;
 
-        stop_delay(true);
+        stop_delay();
 
         // You wouldn't want to lose this accomplishment to a crash, would you?
         // Especially if you manage to trigger one via lua somehow...

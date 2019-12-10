@@ -2943,7 +2943,7 @@ void melee_attack::mons_apply_attack_flavour()
         attacker->start_constricting(*defender);
         // if you got grabbed, interrupt stair climb and passwall
         if (defender->is_player())
-            stop_delay(true);
+            stop_delay();
         break;
 
     case AF_ENGULF:
@@ -3371,7 +3371,7 @@ bool melee_attack::do_knockback(bool trample)
     {
         move_player_to_grid(new_pos, false);
         // Interrupt stair travel and passwall.
-        stop_delay(true);
+        stop_delay();
     }
     else
         defender->move_to_pos(new_pos);
