@@ -36,6 +36,7 @@
 #include "acquire.h"
 #include "act-iter.h"
 #include "adjust.h"
+#include "anvil.h"
 #include "areas.h"
 #include "arena.h"
 #include "artefact.h"
@@ -1204,7 +1205,8 @@ static bool _can_take_stairs(dungeon_feature_type ftype, bool down,
                              bool known_shaft)
 {
     // Up and down both work for shops, portals, and altars.
-    if (ftype == DNGN_ENTER_SHOP || feat_is_altar(ftype))
+    if (ftype == DNGN_ENTER_SHOP || ftype == DNGN_ENCHANTED_ANVIL
+        || feat_is_altar(ftype))
     {
         if (crawl_state.doing_prev_cmd_again)
         {
@@ -1216,6 +1218,8 @@ static bool _can_take_stairs(dungeon_feature_type ftype, bool down,
             canned_msg(MSG_TOO_BERSERK);
         else if (ftype == DNGN_ENTER_SHOP) // don't convert to capitalism
             shop();
+        else if (ftype == DNGN_ENCHANTED_ANVIL)
+            use_anvil();
         else
             try_god_conversion(feat_altar_god(ftype));
         // Even though we may have "succeeded", return false so we don't keep
