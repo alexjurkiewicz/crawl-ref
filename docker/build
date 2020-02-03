@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -eu
+set -o pipefail
+
+stderr() {
+	echo "$@" >&2
+}
+usage() {
+	if [[ $# -gt 0 ]]; then
+		stderr "$@"
+		stderr
+	fi
+	stderr "usage: $0 target"
+	stderr ""
+	stderr "Supported targets:"
+	stderr ""
+	for target in *.Dockerfile; do
+		echo "  ${target%.Dockerfile}"
+	done
+	exit 1
+}
+
+cd "$(dirname "$0")"
+
+if [[ $# != 1 ]]; then
+	usage "no type specified"
+fi
+if [[ $1 = "-h" || $1 = "--help" ]]; then
+	usage
+fi
+target=$1
+version=$(git describe --tags)
+
+# Check environment
+if [[ -f ../crawl-ref/source/util/release_ver ]] ; then
+	stderr "error: util/release_ver already exists, can't proceed"
+	exit 1
+fi
+
+# Build the image
+cp "$target.dockerignore" "../crawl-ref/.dockerignore"
+echo "$version" > ../crawl-ref/source/util/release_ver
+if [[ -f $target.entry.sh ]] ; then
+	cp "$target.entry.sh" ../crawl-ref/entry.sh
+fi
+trap 'rm -f ../crawl-ref/.dockerignore ../crawl-ref/source/util/release_ver ../crawl-ref/entry.sh' EXIT
+docker build \
+	-t "dcss:$version-$target" \
+	-f "$target.Dockerfile" \
+	../crawl-ref

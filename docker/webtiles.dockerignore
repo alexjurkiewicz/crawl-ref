@@ -1,0 +1,12 @@
+# Common ignores
+.dockerignore
+source/*.o
+source/*.d
+source/contrib/*
+source/crawl
+source/catch2-tests-executable
+source/saves/
+source/*.gcno
+source/*.gcda
+source/*.profraw
+source/*.profdata
