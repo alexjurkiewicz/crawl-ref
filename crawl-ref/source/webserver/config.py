@@ -123,6 +123,7 @@ def load_games():
     conf_subdir = "games.d"
     base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), conf_subdir)
     delta = OrderedDict()
+    delta_messages = []
     for file_name in sorted(os.listdir(base_path)):
         path = os.path.join(base_path, file_name)
         if not file_name.endswith('.yaml') and not file_name.endswith('.yml'):
@@ -144,8 +145,11 @@ def load_games():
             logging.warning("Failed to load games from %s, skipping (no 'games' key).",
                 file_name)
             continue
-        logging.debug("Loading data from %s", file_name)
-        messages = []
+        if len(data.keys()) != 1:
+            extra_keys = ",".join(key for key in data.keys() if key != 'games')
+            logging.warning("Found extra top-level keys '%s' in %s, ignoring them (only 'games' key will be parsed).",
+                extra_keys, file_name)
+        logging.info("Loading data from %s", file_name)
         for game in data['games']:
             if not validate_game_dict(game):
                 continue
@@ -154,12 +158,13 @@ def load_games():
                 logging.warning("Game %s from %s was specified in an earlier config file, skipping.", game_id, path)
             delta[game_id] = game
             action = "Updated" if game_id in games else "Loaded"
-            messages.append(("%s game config %s from %s.", action, game_id, file_name))
+            msg = ("%s game config %s from %s.", action, game_id, file_name)
+            delta_messages.append(msg)
     if delta:
-        assert len(delta.keys()) == len(messages)
+        assert len(delta.keys()) == len(delta_messages)
         logging.info("Updating live games config")
         games.update(delta)
-        for message in messages:
+        for message in delta_messages:
             logging.info(*message)
 
 
