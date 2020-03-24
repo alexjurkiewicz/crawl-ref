@@ -109,10 +109,10 @@ def _milestone_files():
     # variant.
     new_files = set()
     for f in files:
-        if f.endswith('milestones'):
-            new_files.add(f + '-seeded')
-        elif f.endswith('-seeded'):
+        if f.endswith('-seeded'):
             new_files.add(f[:-7])
+        else:
+            new_files.add(f + '-seeded')
     files.update(new_files)
 
     # Finally, drop any files that don't exist
