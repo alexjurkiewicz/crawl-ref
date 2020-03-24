@@ -71,15 +71,7 @@ watch_socket_dirs = False
 # 2. As extra games to append to this list from the `load_games` function (which
 #    by default loads games as defined in `games.d/*.yaml`).
 #
-# %n in paths and urls is replaced by the current username
-#
-# morgue_url is for a publicly available URL to access morgue_path
-#
-# milestone_path is the path milestones are written (used for tracking active
-# game actions in the lobby list). If not set, it can be calculated from
-# dir_path. If that is also not set, there is no default. You just need to
-# specify the path to the "milestones" file, the "milestones-seeded" file next
-# to it will be automatically discovered.
+# All options in this config are documented in games.d/base.yaml.
 games = OrderedDict([
     ("dcss-web-trunk", dict(
         name = "DCSS trunk",
