@@ -68,7 +68,8 @@ watch_socket_dirs = False
 #
 # You can define game configs in two ways:
 # 1. With a static dictionary `games`
-# 2. As extra games to append to this list from the `load_games` function
+# 2. As extra games to append to this list from the `load_games` function (which
+#    by default loads games as defined in `games.d/*.yaml`).
 #
 # %n in paths and urls is replaced by the current username
 #
@@ -109,8 +110,9 @@ def load_games():
     the games list without interrupting active game sessions.
 
     The format of the source YAML files is: `games: [<game>, ...]`. Each game is
-    a dictionary as per the above examples, with an extra key `id` for the
-    game's ID. Directory paths support %n as described above.
+    a dictionary matching the format of entries in the `games` variable above,
+    with an extra key `id` for the game's ID. Directory paths support %n as
+    described above.
 
     This example function will only add or update games. It doesn't support
     removing or reordering games. If you want to add support for either, read
@@ -120,37 +122,119 @@ def load_games():
 
     1. The main use-case is to support adding new game modes to a running
        server. Other uses (like modifying or removing an existing game mode, or
-       re-ordering the games list) are not well tested.
+       re-ordering the games list) may work, but are not well tested.
     2. If you do modify a game entry, the changed settings only affect new game
-       sessions. Any existing sessions will use the old config until they close.
-    3. Some settings will affect spectators as well. If you modify a running
-       game's config, it might break spectating until the player restarts.
+       sessions (including new spectators). Existing sessions use the old config
+       until they close.
+    3. Some settings affect spectators. If you modify a running game's config,
+       the mismatch of settings between the player and new spectators might
+       cause spectating to fail until the player restarts with new settings.
     """
     conf_subdir = "games.d"
     base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), conf_subdir)
     for file_name in sorted(os.listdir(base_path)):
-        logging.debug("Parsing %s", file_name)
         path = os.path.join(base_path, file_name)
-        if not os.path.isfile(path):
+        if not file_name.endswith('.yaml') or not file_name.endswith('.yml'):
+            logging.warn("Skipping loading games data from non-yaml file %s",
+                file_name)
             continue
-        if not file_name.endswith('.yaml'):
-            continue
-        with open(path) as f:
-            raw_data = f.read()
         try:
-            data = yaml.safe_load(raw_data)
-        except yaml.YAMLError:
-            logging.exception("Failed to load games from %s, skipping (parse failure).", file_name)
+            with open(path) as f:
+                yaml_text = f.read()
+        except OSError as e:
+            logging.warn("Couldn't read file %s": %s, path, e)
+        try:
+            data = yaml.safe_load(yaml_text)
+        except yaml.YAMLError as e:
+            logging.warning("Failed to load games from %s, skipping (parse failure: %s).",
+                file_name, e)
             continue
         if data is None or 'games' not in data:
-            logging.warning("Failed to load games from %s, skipping (no 'games' key).", file_name)
+            logging.warning("Failed to load games from %s, skipping (no 'games' key).",
+                file_name)
             continue
+        logging.debug("Loading data from %s", file_name)
+        delta = OrderedDict()
+        messages = []
         for game in data['games']:
+            if not validate_game_dict(game):
+                continue
             game_id = game['id']
-            del(game['id'])
+            delta[game_id] = game
             action = "Updated" if game_id in games else "Loaded"
-            games[game_id] = game
-            logging.info("%s game config %s from %s.", action, game_id, file_name)
+            messages.append(("%s game config %s from %s.", action, game_id, file_name))
+        games.update(delta)
+        for message in messages:
+            logging.info(*message)
+
+
+def validate_game_dict(game):
+    """Validate a game dictionary.
+
+    Log warnings about issues and return validity.
+    """
+    if 'id' not in game:
+        # Log the full game definition to help identify the game
+        logging.warn("Missing 'id' from game definition %r", game)
+        return False
+    errors = False
+    required = ('name', 'crawl_binary', 'rcfile_path', 'macro_path',
+        'morgue_path', 'inprogress_path', 'ttyrec_path',
+        'socket_path', 'client_path')
+    optional = ('dir_path', 'cwd', 'morgue_url', 'milestone_path',
+        'send_json_options', 'options', 'env')
+    boolean = ('send_json_options',)
+    string_array = ('options',)
+    string_dict = ('env', )
+    for prop in required:
+        if prop not in game:
+            errors = True
+            logging.warn("Missing required property '%s' in game '%s'",
+                prop, game['id'])
+    for prop, value in game.items():
+        expected = prop in required or prop in optional
+        if not expected:
+            # Don't count this as an error
+            logging.warn("Unknown property '%s' in game '%s'",
+            prop, game['id'])
+        if prop in boolean:
+            if not isinstance(value, bool):
+                errors = True
+                logging.warn("Property '%s' value should be boolean in game '%s'",
+                    prop, game['id'])
+        elif prop in string_array:
+            if not isinstance(value, list):
+                errors = True
+                logging.warn("Property '%s' value should be list of strings in game '%s'",
+                    prop, game['id'])
+                continue
+            for item in value:
+                if not isinstance(item, str):
+                    errors = True
+                    logging.warn("Item '%s' in property '%s' should be a string in game '%s'",
+                        item, prop, game['id'])
+        elif prop in string_dict:
+            if not isinstance(value, dict):
+                errors = True
+                logging.warn("Property '%s' value should be a map of string: string in game '%s'",
+                    prop, game['id'])
+                continue
+            for item_key, item_value in value.items():
+                if not isinstance(item_key, str):
+                    error = True
+                    logging.warn("Item key '%s' in property '%s' should be a string in game '%s'",
+                        item_key, prop, game['id'])
+                if not isinstance(item_value, str):
+                    error = True
+                    logging.warn("Item value '%s' of key '%s' in property '%s' should be a string in game '%s'",
+                        item_value, item_key, prop, game['id'])
+        else:
+            # String property
+            if not isinstance(value, str):
+                errors = True
+                logging.warn("Property '%s' value should be string in game '%s'",
+                    prop, game['id'])
+    return errors
 
 
 dgl_status_file = "./rcs/status"
