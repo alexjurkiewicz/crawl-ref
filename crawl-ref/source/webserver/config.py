@@ -14,14 +14,16 @@
 # this variable from the module, defaulting to False if it doesn't exist (and
 # not raising an exception). `hasattr` is also safe.
 
-import os
 import logging
+import os
+
+import yaml
+
 try:
     from collections import OrderedDict
 except ImportError:
     from ordereddict import OrderedDict # type: ignore
 
-import yaml
 
 dgl_mode = True
 
