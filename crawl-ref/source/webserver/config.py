@@ -168,7 +168,7 @@ def validate_game_dict(game):
         logging.warn("Missing 'id' from game definition %r", game)
         return False
     errors = False
-    required = ('name', 'crawl_binary', 'rcfile_path', 'macro_path',
+    required = ('id', 'name', 'crawl_binary', 'rcfile_path', 'macro_path',
         'morgue_path', 'inprogress_path', 'ttyrec_path',
         'socket_path', 'client_path')
     optional = ('dir_path', 'cwd', 'morgue_url', 'milestone_path',
