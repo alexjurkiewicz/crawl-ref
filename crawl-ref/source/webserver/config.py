@@ -127,7 +127,7 @@ def load_games():
     for file_name in sorted(os.listdir(base_path)):
         path = os.path.join(base_path, file_name)
         if not file_name.endswith('.yaml') and not file_name.endswith('.yml'):
-            logging.warn("Skipping loading games data from non-yaml file %s",
+            logging.warn("Skipping non-yaml file %s",
                 file_name)
             continue
         try:
@@ -158,7 +158,7 @@ def load_games():
                 logging.warning("Game %s from %s was specified in an earlier config file, skipping.", game_id, path)
             delta[game_id] = game
             action = "Updated" if game_id in games else "Loaded"
-            msg = ("%s game config %s from %s.", action, game_id, file_name)
+            msg = ("%s game config %s (from %s).", action, game_id, file_name)
             delta_messages.append(msg)
     if delta:
         assert len(delta.keys()) == len(delta_messages)
