@@ -70,6 +70,10 @@ watch_socket_dirs = False
 # %n in paths and urls is replaced by the current username
 #
 # morgue_url is for a publicly available URL to access morgue_path
+#
+# milestone_path is the path milestones are written (used for tracking active
+# game actions in the lobby list). If not set, it can be calculated from
+# dir_path. If that is also not set, there is no default.
 games = OrderedDict([
     ("dcss-web-trunk", dict(
         name = "DCSS trunk",
@@ -86,6 +90,7 @@ games = OrderedDict([
         # Directory we execute $crawl_binary in. Default: CWD.
         # cwd = ".",
         morgue_url = None,
+        # milestone_path = "./rcs/milestones",
         send_json_options = True,
         # env = {"LANG": "en_US.UTF8"},
         )),
@@ -145,8 +150,10 @@ def load_games():
 
 dgl_status_file = "./rcs/status"
 
-# Set to None not to read milestones
-milestone_file = "./milestones"
+# Extra paths for milestones to read. You should probably just use
+# milestone_path in the games list.
+# Can be a string or list of strings.
+milestone_file = ["./milestones"]
 
 status_file_update_rate = 5
 

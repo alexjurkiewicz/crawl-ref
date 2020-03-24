@@ -12,6 +12,7 @@ games:
     # dir_path: .
     # cwd: .
     morgue_url: None
+    # milestone_path: ./rcs/milestones
     send_json_options: True
     options:
       - -seed
@@ -30,6 +31,7 @@ games:
     # dir_path: .
     # cwd: .
     morgue_url: None
+    # milestone_path: ./rcs/milestones
     send_json_options: True
     options:
       - -sprint
@@ -48,6 +50,7 @@ games:
     # dir_path: .
     # cwd: .
     morgue_url: None
+    # milestone_path: ./rcs/milestones
     send_json_options: True
     options:
       - -tutorial

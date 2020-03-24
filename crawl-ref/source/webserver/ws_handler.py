@@ -88,12 +88,29 @@ def find_running_game(charname, start):
 
 milestone_file_tailers = []
 def start_reading_milestones():
-    if config.milestone_file is None: return
+    files = set()
 
-    if isinstance(config.milestone_file, str):
-        files = [config.milestone_file]
-    else:
-        files = config.milestone_file
+    # Explicit top-level config
+    top_level_milestones = getattr(config, 'milestone_file', None)
+    if top_level_milestones is not None:
+        if isinstance(top_level_milestones, str):
+            files.add(top_level_milestones)
+        else:
+            # list / iterable
+            files.update(top_level_milestones)
+
+    # Per-game config
+    for game_id in config.games:
+        game_config = config.games[game_id]
+        milestone_file = game_config.get('milestone_file', None)
+        if milestone_file is None and 'dir_path' in game_config:
+            # milestone appears in this dir by default
+            milestone_file = os.path.join(game_config['dir_path'], 'milestones')
+        if 'milestone_file' is not None:
+            files.add(milestone_file)
+
+    # Validate all paths
+    files = [f for f in files if os.path.isfile(f)]
 
     for f in files:
         milestone_file_tailers.append(FileTailer(f, handle_new_milestone))
