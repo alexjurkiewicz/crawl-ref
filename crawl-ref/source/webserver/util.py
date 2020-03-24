@@ -108,7 +108,8 @@ def send_email(to_address, subject, body_plaintext, body_html):
 
     logging.info("Sending email to '%s' with subject '%s'" %
                                                 (to_address, subject))
-    email_server = None
+    email_server: smtplib.SMTP
+    connected = False
     try:
         # establish connection
         # TODO: this should not be a blocking call at all...
@@ -116,6 +117,7 @@ def send_email(to_address, subject, body_plaintext, body_html):
             email_server = smtplib.SMTP_SSL(config.smtp_host, config.smtp_port)
         else:
             email_server = smtplib.SMTP(config.smtp_host, config.smtp_port)
+        connected = True
 
         # authenticate
         if config.smtp_user:
@@ -137,7 +139,7 @@ def send_email(to_address, subject, body_plaintext, body_html):
         email_server.sendmail(config.smtp_from_addr, to_address, msg.as_string())
     finally:
         # end connection
-        if email_server: email_server.quit()
+        if connected: email_server.quit()
 
 def validate_email_address(address):  # type: (str) -> Optional[str]
     # Returns an error string describing the problem, or None
