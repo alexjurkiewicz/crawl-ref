@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
 import os, os.path, errno, sys
+import signal
 
 import tornado.httpserver
 import tornado.ioloop
@@ -270,6 +271,17 @@ def ensure_tornado_current():
             "You are running a deprecated version of tornado; please update"
             " to at least version 4.")
 
+def usr1_handler(signum, frame):
+    assert signum == signal.SIGUSR1
+    # Support configs without load_games defined
+    if not hasattr(config, 'load_games'):
+        return
+    logging.info("Received USR1, reloading config.")
+    try:
+        config.load_games()
+    except Exception:
+        logging.exception("Failed to update games after USR1 signal.")
+
 if __name__ == "__main__":
     if chroot:
         os.chroot(chroot)
@@ -304,6 +316,9 @@ if __name__ == "__main__":
         userdb.ensure_user_db_exists()
         userdb.upgrade_user_db()
     userdb.ensure_settings_db_exists()
+
+    signal.signal(signal.SIGUSR1, usr1_handler)
+
     try:
         IOLoop.current().set_blocking_log_threshold(0.5) # type: ignore
         logging.info("Blocking call timeout: 500ms.")

@@ -68,7 +68,12 @@ watch_socket_dirs = False
 # 2. As extra games to append to this list from the `load_games` function
 #
 # %n in paths and urls is replaced by the current username
+#
 # morgue_url is for a publicly available URL to access morgue_path
+#
+# The `load_games` function will be called every time the webserver is sent a
+# USR1 signal (eg `kill -USR1 <pid>`). This is to allow dynamic modification of
+# the games list.
 games = OrderedDict([
     ("dcss-web-trunk", dict(
         name = "DCSS trunk",
@@ -110,18 +115,18 @@ def load_games():
             raw_data = f.read()
         try:
             data = yaml.safe_load(raw_data)
-        except yaml.YAMLError as e:
-            logging.exception("Failed to load games from %s, skipping (parse failure)", file_name)
+        except yaml.YAMLError:
+            logging.exception("Failed to load games from %s, skipping (parse failure).", file_name)
             continue
-        if 'games' not in data:
-            logging.warning("Failed to load games from %s, skipping (no games: key)", file_name)
+        if data is None or 'games' not in data:
+            logging.warning("Failed to load games from %s, skipping (no 'games' key).", file_name)
             continue
         for game in data['games']:
             game_id = game['id']
             del(game['id'])
             action = "Updated" if game_id in games else "Loaded"
             games[game_id] = game
-            logging.info("%s game config %s from %s", action, game_id, file_name)
+            logging.info("%s game config %s from %s.", action, game_id, file_name)
 
 
 dgl_status_file = "./rcs/status"
