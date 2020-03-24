@@ -10,6 +10,7 @@ import tornado.template
 
 import logging, logging.handlers
 
+import config
 from config import *
 from util import *
 from ws_handler import *
@@ -235,10 +236,12 @@ def init_logging(logging_config):
 
 
 def check_config():
+    logging.debug("check_config starting")
     success = True
     for (game_id, game_data) in games.items():
         if not os.path.exists(game_data["crawl_binary"]):
-            logging.warning("Crawl executable %s doesn't exist!", game_data["crawl_binary"])
+            logging.warning("Crawl executable for %s (%s) doesn't exist!",
+                            game_id, game_data["crawl_binary"])
             success = False
 
         if ("client_path" in game_data and
@@ -249,6 +252,7 @@ def check_config():
     if getattr(config, "allow_password_reset", False) and not config.lobby_url:
         logging.warning("Lobby URL needs to be defined!")
         success = False
+    logging.debug("check_config finishing success:%s", success)
     return success
 
 def monkeypatch_tornado24():
@@ -271,6 +275,10 @@ if __name__ == "__main__":
         os.chroot(chroot)
 
     init_logging(logging_config)
+
+    # Support configs without load_games defined
+    if hasattr(config, 'load_games'):
+        config.load_games()
 
     if not check_config():
         err_exit("Errors in config. Exiting.")

@@ -14,11 +14,14 @@
 # this variable from the module, defaulting to False if it doesn't exist (and
 # not raising an exception). `hasattr` is also safe.
 
+import os
 import logging
 try:
     from collections import OrderedDict
 except ImportError:
     from ordereddict import OrderedDict # type: ignore
+
+import yaml
 
 dgl_mode = True
 
@@ -59,6 +62,11 @@ game_data_no_cache = True
 watch_socket_dirs = False
 
 # Game configs
+#
+# You can define game configs in two ways:
+# 1. With a static dictionary `games`
+# 2. As extra games to append to this list from the `load_games` function
+#
 # %n in paths and urls is replaced by the current username
 # morgue_url is for a publicly available URL to access morgue_path
 games = OrderedDict([
@@ -76,46 +84,45 @@ games = OrderedDict([
         send_json_options = True,
         # env = {"LANG": "en_US.UTF8"},
         )),
-    ("seeded-web-trunk", dict(
-        name = "DCSS trunk, custom seed",
-        crawl_binary = "./crawl",
-        rcfile_path = "./rcs/",
-        macro_path = "./rcs/",
-        morgue_path = "./rcs/%n",
-        inprogress_path = "./rcs/running",
-        ttyrec_path = "./rcs/ttyrecs/%n",
-        socket_path = "./rcs",
-        client_path = "./webserver/game_data/",
-        morgue_url = None,
-        send_json_options = True,
-        options = ["-seed"])),
-    ("sprint-web-trunk", dict(
-        name = "Sprint trunk",
-        crawl_binary = "./crawl",
-        rcfile_path = "./rcs/",
-        macro_path = "./rcs/",
-        morgue_path = "./rcs/%n",
-        inprogress_path = "./rcs/running",
-        ttyrec_path = "./rcs/ttyrecs/%n",
-        socket_path = "./rcs",
-        client_path = "./webserver/game_data/",
-        morgue_url = None,
-        send_json_options = True,
-        options = ["-sprint"])),
-    ("tut-web-trunk", dict(
-        name = "Tutorial trunk",
-        crawl_binary = "./crawl",
-        rcfile_path = "./rcs/",
-        macro_path = "./rcs/",
-        morgue_path = "./rcs/%n",
-        inprogress_path = "./rcs/running",
-        ttyrec_path = "./rcs/ttyrecs/%n",
-        socket_path = "./rcs",
-        client_path = "./webserver/game_data/",
-        morgue_url = None,
-        send_json_options = True,
-        options = ["-tutorial"])),
 ])
+
+def load_games():
+    """Load game definitions from games.d/*.yaml files.
+
+    The format of the source YAML files is: `games: [<game>, ...]` (where each
+    game is a dictionary as per the above examples, with an extra key `id` for
+    the game's ID).
+
+    This example function will only add or update games. You can't remove games
+    with it. If you want to add support for this, make sure to disallow removing
+    games that are currently in use.
+    """
+    conf_subdir = "games.d"
+    base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), conf_subdir)
+    for file_name in sorted(os.listdir(base_path)):
+        logging.debug("Parsing %s", file_name)
+        path = os.path.join(base_path, file_name)
+        if not os.path.isfile(path):
+            continue
+        if not file_name.endswith('.yaml'):
+            continue
+        with open(path) as f:
+            raw_data = f.read()
+        try:
+            data = yaml.safe_load(raw_data)
+        except yaml.YAMLError as e:
+            logging.exception("Failed to load games from %s, skipping (parse failure)", file_name)
+            continue
+        if 'games' not in data:
+            logging.warning("Failed to load games from %s, skipping (no games: key)", file_name)
+            continue
+        for game in data['games']:
+            game_id = game['id']
+            del(game['id'])
+            action = "Updated" if game_id in games else "Loaded"
+            games[game_id] = game
+            logging.info("%s game config %s from %s", action, game_id, file_name)
+
 
 dgl_status_file = "./rcs/status"
 
