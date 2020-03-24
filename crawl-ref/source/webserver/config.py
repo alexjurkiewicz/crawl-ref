@@ -132,7 +132,7 @@ def load_games():
             with open(path) as f:
                 yaml_text = f.read()
         except OSError as e:
-            logging.warn("Couldn't read file %s": %s, path, e)
+            logging.warn("Couldn't read file %s: %s", path, e)
         try:
             data = yaml.safe_load(yaml_text)
         except yaml.YAMLError as e:
