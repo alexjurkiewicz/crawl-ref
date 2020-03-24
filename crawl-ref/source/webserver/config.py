@@ -122,6 +122,7 @@ def load_games():
     """
     conf_subdir = "games.d"
     base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), conf_subdir)
+    delta = OrderedDict()
     for file_name in sorted(os.listdir(base_path)):
         path = os.path.join(base_path, file_name)
         if not file_name.endswith('.yaml') and not file_name.endswith('.yml'):
@@ -144,15 +145,19 @@ def load_games():
                 file_name)
             continue
         logging.debug("Loading data from %s", file_name)
-        delta = OrderedDict()
         messages = []
         for game in data['games']:
             if not validate_game_dict(game):
                 continue
             game_id = game['id']
+            if game_id in delta:
+                logging.warning("Game %s from %s was specified in an earlier config file, skipping.", game_id, path)
             delta[game_id] = game
             action = "Updated" if game_id in games else "Loaded"
             messages.append(("%s game config %s from %s.", action, game_id, file_name))
+    if delta:
+        assert len(delta.keys()) == len(messages)
+        logging.info("Updating live games config")
         games.update(delta)
         for message in messages:
             logging.info(*message)
