@@ -2,6 +2,13 @@
 
 This is the Webtiles server and client.
 
+## Contents
+
+* [Prerequisites](#prerequisites)
+* [Running the server for testing purposes](#running-the-server-for-testing-purposes)
+* [Running a production server](#running-a-production-server)
+* [Contributing](#contributing)
+
 ## Prerequisites
 
 To run the server, you need:
@@ -41,7 +48,9 @@ When developing, you'll probably want to automatically log in as a
 testing user and disable caching of non-game-data files; see the
 "autologin" and "no_cache" options in webserver/config.py for this.
 
-## Running a real server
+## Running a production server
+
+Use the requirements files `requirements/base.{py2,py3}.txt`.
 
 The server can be configured by modifying the file `config.py`. Most of
 the options are commented or should be self-evident. You should
@@ -55,3 +64,11 @@ currently this is not done by the server. You can have the script be
 run on every login by setting `init_player_program`. There is an example
 script in `util/webtiles-init-player.sh`, but you will probably want to
 customize it.
+
+## Contributing
+
+For Python developers, several utilities are available:
+
+* `make format` -- format code
+* `make lint` -- run several Python linters (with Flake8)
+* `requirements.in/sync.sh` -- update requirements files
