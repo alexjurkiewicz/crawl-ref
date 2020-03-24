@@ -73,7 +73,9 @@ watch_socket_dirs = False
 #
 # milestone_path is the path milestones are written (used for tracking active
 # game actions in the lobby list). If not set, it can be calculated from
-# dir_path. If that is also not set, there is no default.
+# dir_path. If that is also not set, there is no default. You just need to
+# specify the path to the "milestones" file, the "milestones-seeded" file next
+# to it will be automatically discovered.
 games = OrderedDict([
     ("dcss-web-trunk", dict(
         name = "DCSS trunk",

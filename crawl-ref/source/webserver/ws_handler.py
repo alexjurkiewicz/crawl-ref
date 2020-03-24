@@ -102,12 +102,22 @@ def start_reading_milestones():
     # Per-game config
     for game_id in config.games:
         game_config = config.games[game_id]
-        milestone_file = game_config.get('milestone_file', None)
+        milestone_file = game_config.get('milestone_file')
         if milestone_file is None and 'dir_path' in game_config:
             # milestone appears in this dir by default
             milestone_file = os.path.join(game_config['dir_path'], 'milestones')
-        if 'milestone_file' is not None:
+        if milestone_file is not None:
             files.add(milestone_file)
+
+    # For every file, make sure we have both the "milestones" and
+    # "milestones-seeded" variants.
+    new_files = set()
+    for f in files:
+        if f.endswith('milestones'):
+            new_files.add(f + '-seeded')
+        elif f.endswith('-seeded'):
+            new_files.add(f[:-7])
+    files.update(new_files)
 
     # Validate all paths
     files = [f for f in files if os.path.isfile(f)]
