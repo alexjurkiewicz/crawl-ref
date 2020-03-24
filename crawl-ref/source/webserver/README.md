@@ -26,9 +26,9 @@ the milestone and player location display in the lobby.
 3. Set up a Python virtualenv:
 
     ```sh
-    python -m virtualenv webserver/venv
+    python3 -m virtualenv -p python3 webserver/venv # Remove the "3"s to use Py2
     . ./webserver/venv/bin/activate
-    pip install -r webserver/requirements.txt
+    pip install -r webserver/requirements/dev.py3.txt # dev.py2.txt for Py2
     ```
 
 4. Run the server: `python webserver/server.py`
