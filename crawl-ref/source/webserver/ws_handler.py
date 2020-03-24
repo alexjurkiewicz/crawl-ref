@@ -760,6 +760,11 @@ class CrawlWebSocket(tornado.websocket.WebSocketHandler):
         # type: (...) -> Optional[tornado.concurrent.Future[None]]
         if self.client_closed:
             return None
+        # XXX remove this check before upstream merge
+        # +advil | I would rather solve it by static type checking if possible, looking around to figure out how that might happen
+        if isinstance(msg, bytes):
+            logging.warn("Found bytes message %r, coercing to string. You should fix this.", repr(msg))
+            msg = msg.decode()
         self.message_queue.append(msg)
         if send:
             return self.flush_messages()
