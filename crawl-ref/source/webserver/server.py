@@ -234,12 +234,11 @@ def init_logging(logging_config):
         logging.getLogger().addFilter(TornadoFilter())
     logging.addLevelName(logging.DEBUG, "DEBG")
     logging.addLevelName(logging.WARNING, "WARN")
-    if config.logging_config.get("access_logs") != True:
+    if config.logging_config.get("access_logs") == False: # None is unset, and default is enabled
         logging.getLogger("tornado.access").setLevel(logging.ERROR)
 
 
 def check_config():
-    logging.debug("check_config starting")
     success = True
     for (game_id, game_data) in games.items():
         if not os.path.exists(game_data["crawl_binary"]):
@@ -255,7 +254,6 @@ def check_config():
     if getattr(config, "allow_password_reset", False) and not config.lobby_url:
         logging.warning("Lobby URL needs to be defined!")
         success = False
-    logging.debug("check_config finishing success:%s", success)
     return success
 
 def monkeypatch_tornado24():

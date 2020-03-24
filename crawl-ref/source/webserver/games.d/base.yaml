@@ -1,21 +1,56 @@
+# Games are stored in order. The order of games you define in these files will
+# be preserved, and the files will be loaded in sorted order.
 games:
+  # id must be unique for each game
   - id: seeded-web-trunk
+    # The name for this game, displayed on the webtiles HTML interface
     name: DCSS trunk, custom seed
+    # Executable file to run
     crawl_binary: ./crawl
+    # Directory all player RC files are stored in
     rcfile_path: ./rcs/
+    # Directory all player macro files are stored in. Generally the same as
+    # rcfile_path for official webtiles servers.
     macro_path: ./rcs/
+    # Directory the individual player's morgue files are stored in
     morgue_path: ./rcs/%n
+    # Directory where ttyrec files for active games are written to
     inprogress_path: ./rcs/running
+    # Directory where ttyrec files are stored for the individual user
     ttyrec_path: ./rcs/ttyrecs/%n
+    # Directory where sockets are placed. These sockets are used for
+    # communication between the webtiles server and DCSS executable.
     socket_path: ./rcs
+    # Static content used by the game (eg spritesheets, game HTML). DCSS builds
+    # this as the web/ directory.
     client_path: ./webserver/game_data/
+    # The DCSS "dir" is where save games plus thelogfile/milestones files are
+    # written. If you don't specify this, the game uses a compile-time default,
+    # which depends on your OS and compilation settings.
     # dir_path: .
+    # The working directory to run crawl from. You shouldn't really need to set
+    # this, unless you are trying to run the circa 2016 fork DCSS Circus Animals
+    # on a real webtiles server, and dont want save games littering your
+    # webserver directory.
     # cwd: .
+    # The URL shown to users when they create a character dump (`#`) ingame. You
+    # can use %n in it, like a directory. If you don't specify one, the user
+    # isn't told where their dump was written -- but it's still written.
     morgue_url: None
+    # The path to the game's "milestones" file. If you specify dir_path this can
+    # be inferred automatically (since it's $dir_path/milestones), but otherwise
+    # you should specify this explicitly. The milestones file is read to
+    # populate the 'milestones' column in the HTML interface. If you don't
+    # specify a milestones path, you'll just see nothing specified there.
     # milestone_path: ./rcs/milestones
+    # Legacy option. Leave this alone. (Or submit a PR to remove it.)
     send_json_options: True
+    # Array of extra options to add to the DCSS command.
     options:
       - -seed
+    # Map of extra environment variables to set when executing the DCSS command.
+    # All env vars from the webtiles server environment are automatically
+    # inherited.
     # env:
     #   LANG: en_US.UTF8
   - id: sprint-web-trunk

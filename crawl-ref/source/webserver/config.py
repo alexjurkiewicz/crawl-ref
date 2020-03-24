@@ -40,7 +40,7 @@ logging_config = {
     # "filename": "webtiles.log",
     "level": logging.INFO,
     "format": "%(asctime)s %(levelname)s: %(message)s",
-    # Log HTTP access requests
+    # Log HTTP access requests. Defaults to enabled.
     "access_logs": False,
 }
 

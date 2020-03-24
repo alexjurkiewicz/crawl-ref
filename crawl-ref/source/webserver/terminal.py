@@ -25,7 +25,7 @@ class TerminalRecorder(object):
                  ):
         """
         Args:
-            command: array of command to run, eg [cmd, args, ...]
+            command: argv of command to run, eg [cmd, args, ...]
             env_vars: dictionary of environment variables to set. The variables
                 COLUMNS, LINES, and TERM cannot be overriden.
         """
