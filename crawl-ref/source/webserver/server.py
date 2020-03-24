@@ -234,7 +234,8 @@ def init_logging(logging_config):
         logging.getLogger().addFilter(TornadoFilter())
     logging.addLevelName(logging.DEBUG, "DEBG")
     logging.addLevelName(logging.WARNING, "WARN")
-    if config.logging_config.get("access_logs") == False: # None is unset, and default is enabled
+    # Not a simple boolean check because the default (if unset/None) is True
+    if config.logging_config.get("access_logs") == False:
         logging.getLogger("tornado.access").setLevel(logging.ERROR)
 
 

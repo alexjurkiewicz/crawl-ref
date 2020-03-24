@@ -42,6 +42,8 @@ games:
     # you should specify this explicitly. The milestones file is read to
     # populate the 'milestones' column in the HTML interface. If you don't
     # specify a milestones path, you'll just see nothing specified there.
+    # (Note: DCSS writes both "milestones" and "milestones-seeded", we'll
+    # automatically pick up both if you specify the former's path.)
     # milestone_path: ./rcs/milestones
     # Legacy option. Leave this alone. (Or submit a PR to remove it.)
     send_json_options: True

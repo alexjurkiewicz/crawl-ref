@@ -237,9 +237,9 @@ def validate_game_dict(game):
 
 dgl_status_file = "./rcs/status"
 
-# Extra paths for milestones to read. You should probably just use
-# milestone_path in the games list.
-# Can be a string or list of strings.
+# Extra paths to tail for milestone updates. This is a legacy setting, you
+# should use `milestone_path` or `dir_path` for each game in the games dict.
+# (This setting can be a string or list of strings.)
 milestone_file = ["./milestones"]
 
 status_file_update_rate = 5
