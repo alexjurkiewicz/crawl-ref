@@ -558,6 +558,9 @@ class CrawlProcessHandlerBase(object):
         if "options" in game:
             call += game["options"]
 
+        if "dir_path" in game:
+            call += ["-dir", self.config_path("dir_path")]
+
         return call
 
     def note_activity(self):
@@ -733,7 +736,8 @@ class CrawlProcessHandler(CrawlProcessHandlerBase):
                                             self._ttyrec_id_header(),
                                             self.logger,
                                             config.recording_term_size,
-                                            env_vars = game.get("env", {}),)
+                                            env_vars = game.get("env", {}),
+                                            game_cwd = game.get("cwd", None),)
             self.process.end_callback = self._on_process_end
             self.process.output_callback = self._on_process_output
             self.process.activity_callback = self.note_activity

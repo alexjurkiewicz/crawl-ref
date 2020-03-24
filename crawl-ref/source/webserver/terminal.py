@@ -21,6 +21,7 @@ class TerminalRecorder(object):
                  logger,
                  termsize,
                  env_vars, # type: Dict[str, str]
+                 game_cwd, # type: Optional[str]
                  ):
         """
         Args:
@@ -38,6 +39,7 @@ class TerminalRecorder(object):
         self.output_buffer = b""
         self.termsize = termsize
         self.env_vars = env_vars
+        self.game_cwd = game_cwd
 
         self.pid = None
         self.child_fd = None
@@ -90,6 +92,8 @@ class TerminalRecorder(object):
             env["COLUMNS"] = str(cols)
             env["LINES"]   = str(lines)
             env["TERM"]    = "linux"
+            if self.game_cwd:
+                os.chdir(self.game_cwd)
             try:
                 os.execvpe(self.command[0], self.command, env)
             except OSError:

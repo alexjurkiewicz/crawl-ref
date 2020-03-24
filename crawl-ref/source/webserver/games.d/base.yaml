@@ -9,6 +9,8 @@ games:
     ttyrec_path: ./rcs/ttyrecs/%n
     socket_path: ./rcs
     client_path: ./webserver/game_data/
+    # dir_path: .
+    # cwd: .
     morgue_url: None
     send_json_options: True
     options:
@@ -25,6 +27,8 @@ games:
     ttyrec_path: ./rcs/ttyrecs/%n
     socket_path: ./rcs
     client_path: ./webserver/game_data/
+    # dir_path: .
+    # cwd: .
     morgue_url: None
     send_json_options: True
     options:
@@ -41,6 +45,8 @@ games:
     ttyrec_path: ./rcs/ttyrecs/%n
     socket_path: ./rcs
     client_path: ./webserver/game_data/
+    # dir_path: .
+    # cwd: .
     morgue_url: None
     send_json_options: True
     options:
