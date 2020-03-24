@@ -732,7 +732,8 @@ class CrawlProcessHandler(CrawlProcessHandlerBase):
             self.process = TerminalRecorder(call, self.ttyrec_filename,
                                             self._ttyrec_id_header(),
                                             self.logger,
-                                            config.recording_term_size)
+                                            config.recording_term_size,
+                                            env_vars = game.get("env", {}),)
             self.process.end_callback = self._on_process_end
             self.process.output_callback = self._on_process_output
             self.process.activity_callback = self.note_activity

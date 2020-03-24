@@ -73,7 +73,9 @@ games = OrderedDict([
         socket_path = "./rcs",
         client_path = "./webserver/game_data/",
         morgue_url = None,
-        send_json_options = True)),
+        send_json_options = True,
+        # env = {"LANG": "en_US.UTF8"},
+        )),
     ("seeded-web-trunk", dict(
         name = "DCSS trunk, custom seed",
         crawl_binary = "./crawl",
