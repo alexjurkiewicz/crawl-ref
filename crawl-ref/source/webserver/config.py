@@ -36,9 +36,12 @@ bind_port = 8080
 # )
 
 logging_config = {
-#    "filename": "webtiles.log",
+    # If a filename is not set, log to stdout
+    # "filename": "webtiles.log",
     "level": logging.INFO,
-    "format": "%(asctime)s %(levelname)s: %(message)s"
+    "format": "%(asctime)s %(levelname)s: %(message)s",
+    # Log HTTP access requests
+    "access_logs": False,
 }
 
 password_db = "./webserver/passwd.db3"
