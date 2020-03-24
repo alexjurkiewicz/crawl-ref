@@ -124,7 +124,7 @@ def load_games():
     base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), conf_subdir)
     for file_name in sorted(os.listdir(base_path)):
         path = os.path.join(base_path, file_name)
-        if not file_name.endswith('.yaml') or not file_name.endswith('.yml'):
+        if not file_name.endswith('.yaml') and not file_name.endswith('.yml'):
             logging.warn("Skipping loading games data from non-yaml file %s",
                 file_name)
             continue
