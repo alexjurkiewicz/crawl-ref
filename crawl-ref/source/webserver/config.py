@@ -91,12 +91,9 @@ games = OrderedDict([
         ttyrec_path = "./rcs/ttyrecs/%n",
         socket_path = "./rcs",
         client_path = "./webserver/game_data/",
-        # Passed as -dir $dir_path to Crawl. Default: unset (not passed to Crawl).
         # dir_path = ".",
-        # Directory we execute $crawl_binary in. Default: CWD.
         # cwd = ".",
         morgue_url = None,
-        # This is only required if you don't specify dir_path
         # milestone_path = "./rcs/milestones",
         send_json_options = True,
         # env = {"LANG": "en_US.UTF8"},
