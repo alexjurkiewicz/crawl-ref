@@ -695,6 +695,7 @@ class CrawlWebSocket(tornado.websocket.WebSocketHandler):
         self.send_message("rcfile_contents", contents = contents)
 
     def set_rc(self, game_id, contents):
+        game_id = str(game_id) # protect against JS submitting bad data
         rcfile_path = dgl_format_str(config.games[game_id]["rcfile_path"],
                                      self.username, config.games[game_id])
         rcfile_path = os.path.join(rcfile_path, self.username + ".rc")
