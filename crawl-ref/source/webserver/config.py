@@ -172,7 +172,7 @@ def validate_game_dict(game):
         # Log the full game definition to help identify the game
         logging.warn("Missing 'id' from game definition %r", game)
         return False
-    errors = False
+    found_errors = False
     required = ('id', 'name', 'crawl_binary', 'rcfile_path', 'macro_path',
         'morgue_path', 'inprogress_path', 'ttyrec_path',
         'socket_path', 'client_path')
@@ -183,7 +183,7 @@ def validate_game_dict(game):
     string_dict = ('env', )
     for prop in required:
         if prop not in game:
-            errors = True
+            found_errors = True
             logging.warn("Missing required property '%s' in game '%s'",
                 prop, game['id'])
     for prop, value in game.items():
@@ -194,23 +194,23 @@ def validate_game_dict(game):
             prop, game['id'])
         if prop in boolean:
             if not isinstance(value, bool):
-                errors = True
+                found_errors = True
                 logging.warn("Property '%s' value should be boolean in game '%s'",
                     prop, game['id'])
         elif prop in string_array:
             if not isinstance(value, list):
-                errors = True
+                found_errors = True
                 logging.warn("Property '%s' value should be list of strings in game '%s'",
                     prop, game['id'])
                 continue
             for item in value:
                 if not isinstance(item, str):
-                    errors = True
+                    found_errors = True
                     logging.warn("Item '%s' in property '%s' should be a string in game '%s'",
                         item, prop, game['id'])
         elif prop in string_dict:
             if not isinstance(value, dict):
-                errors = True
+                found_errors = True
                 logging.warn("Property '%s' value should be a map of string: string in game '%s'",
                     prop, game['id'])
                 continue
@@ -226,10 +226,10 @@ def validate_game_dict(game):
         else:
             # String property
             if not isinstance(value, str):
-                errors = True
+                found_errors = True
                 logging.warn("Property '%s' value should be string in game '%s'",
                     prop, game['id'])
-    return errors
+    return not found_errors
 
 
 dgl_status_file = "./rcs/status"
