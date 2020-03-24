@@ -70,10 +70,6 @@ watch_socket_dirs = False
 # %n in paths and urls is replaced by the current username
 #
 # morgue_url is for a publicly available URL to access morgue_path
-#
-# The `load_games` function will be called every time the webserver is sent a
-# USR1 signal (eg `kill -USR1 <pid>`). This is to allow dynamic modification of
-# the games list.
 games = OrderedDict([
     ("dcss-web-trunk", dict(
         name = "DCSS trunk",
@@ -98,13 +94,27 @@ games = OrderedDict([
 def load_games():
     """Load game definitions from games.d/*.yaml files.
 
-    The format of the source YAML files is: `games: [<game>, ...]` (where each
-    game is a dictionary as per the above examples, with an extra key `id` for
-    the game's ID).
+    This function will be called on startup and every time the webserver is sent
+    a USR1 signal (eg `kill -USR1 <pid>`). This allows dynamic modification of
+    the games list without interrupting active game sessions.
 
-    This example function will only add or update games. You can't remove games
-    with it. If you want to add support for this, make sure to disallow removing
-    games that are currently in use.
+    The format of the source YAML files is: `games: [<game>, ...]`. Each game is
+    a dictionary as per the above examples, with an extra key `id` for the
+    game's ID. Directory paths support %n as described above.
+
+    This example function will only add or update games. It doesn't support
+    removing or reordering games. If you want to add support for either, read
+    the caveats below and please contribute the improvement as a pull request!
+
+    Dynamic update caveats:
+
+    1. The main use-case is to support adding new game modes to a running
+       server. Other uses (like modifying or removing an existing game mode, or
+       re-ordering the games list) are not well tested.
+    2. If you do modify a game entry, the changed settings only affect new game
+       sessions. Any existing sessions will use the old config until they close.
+    3. Some settings will affect spectators as well. If you modify a running
+       game's config, it might break spectating until the player restarts.
     """
     conf_subdir = "games.d"
     base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), conf_subdir)
