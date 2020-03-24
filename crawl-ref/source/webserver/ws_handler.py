@@ -86,22 +86,18 @@ def find_running_game(charname, start):
             return process
     return None
 
-milestone_file_tailers = []
-def start_reading_milestones():
+
+def _milestone_files():
+    # First we collect all milestone files explicitly specified in the config.
     files = set()
 
-    # Explicit top-level config
     top_level_milestones = getattr(config, 'milestone_file', None)
     if top_level_milestones is not None:
-        if isinstance(top_level_milestones, str):
-            files.add(top_level_milestones)
-        else:
-            # list / iterable
-            files.update(top_level_milestones)
+        if not isinstance(top_level_milestones, list):
+            top_level_milestones = [top_level_milestones]
+        files.update(top_level_milestones)
 
-    # Per-game config
-    for game_id in config.games:
-        game_config = config.games[game_id]
+    for game_config in config.games.values():
         milestone_file = game_config.get('milestone_file')
         if milestone_file is None and 'dir_path' in game_config:
             # milestone appears in this dir by default
@@ -109,8 +105,8 @@ def start_reading_milestones():
         if milestone_file is not None:
             files.add(milestone_file)
 
-    # For every file, make sure we have both the "milestones" and
-    # "milestones-seeded" variants.
+    # Then, make sure for every milestone we have the -seeded and non-seeded
+    # variant.
     new_files = set()
     for f in files:
         if f.endswith('milestones'):
@@ -119,10 +115,15 @@ def start_reading_milestones():
             new_files.add(f[:-7])
     files.update(new_files)
 
-    # Validate all paths
+    # Finally, drop any files that don't exist
     files = [f for f in files if os.path.isfile(f)]
 
-    for f in files:
+    return files
+
+milestone_file_tailers = []
+def start_reading_milestones():
+    milestone_files = _milestone_files()
+    for f in milestone_files:
         milestone_file_tailers.append(FileTailer(f, handle_new_milestone))
 
 def handle_new_milestone(line):
@@ -695,7 +696,6 @@ class CrawlWebSocket(tornado.websocket.WebSocketHandler):
         self.send_message("rcfile_contents", contents = contents)
 
     def set_rc(self, game_id, contents):
-        game_id = str(game_id) # protect against JS submitting bad data
         rcfile_path = dgl_format_str(config.games[game_id]["rcfile_path"],
                                      self.username, config.games[game_id])
         rcfile_path = os.path.join(rcfile_path, self.username + ".rc")

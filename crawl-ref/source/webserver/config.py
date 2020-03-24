@@ -96,6 +96,7 @@ games = OrderedDict([
         # Directory we execute $crawl_binary in. Default: CWD.
         # cwd = ".",
         morgue_url = None,
+        # This is only required if you don't specify dir_path
         # milestone_path = "./rcs/milestones",
         send_json_options = True,
         # env = {"LANG": "en_US.UTF8"},
