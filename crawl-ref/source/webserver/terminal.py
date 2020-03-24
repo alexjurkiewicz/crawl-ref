@@ -7,6 +7,7 @@ import resource
 import signal
 import sys
 import time
+from typing import List, Dict, Optional, BinaryIO
 import tornado.ioloop
 from tornado.ioloop import IOLoop
 from tornado.escape import to_unicode
@@ -31,7 +32,7 @@ class TerminalRecorder(object):
         """
         self.command = command
         if filename:
-            self.ttyrec = open(filename, "wb", 0)
+            self.ttyrec = open(filename, "wb", 0) # type: Optional[BinaryIO]
         else:
             self.ttyrec = None
         self.id = id
