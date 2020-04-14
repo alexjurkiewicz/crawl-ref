@@ -86,7 +86,7 @@ MAKEFLAGS += -rR # This only works for recursive makes, i.e. contribs ...
         clean-catch2 clean-plug-and-play-tests \
 		clean-coverage clean-coverage-full \
         distclean debug debug-lite profile package-source source \
-        build-windows package-windows docs greet api api-dev android FORCE \
+        build-windows package-windows-installer docs greet api api-dev android FORCE \
         monster catch2-tests plug-and-play-tests
 
 include Makefile.obj
@@ -1831,7 +1831,7 @@ removeold:
 #
 
 # You need to have NSIS installed.
-package-windows:
+package-windows-installer:
 ifneq (x$(SRC_VERSION),x$(shell cat build-win/version.txt 2>/dev/null))
 	+$(MAKE) build-windows
 endif
@@ -1852,20 +1852,25 @@ endif
 	echo $(SRC_VERSION) >build-win/version.txt
 
 ZIP_DOCS=../../LICENSE
-package-windows-zips:
+package-windows-zip-tiles:
 ifneq ($(GAME),crawl.exe)
 	@echo "This is only for Windows; please specify CROSSHOST.";false
 endif
-	+$(MAKE) clean
 	+$(MAKE) TILES=y DESTDIR=build-win/stone_soup-tiles-$(MAJOR_VERSION) FORCE_SSE=y install
 	cp -p $(ZIP_DOCS) build-win/stone_soup-tiles-$(MAJOR_VERSION)/
 	cd build-win && zip -9r ../stone_soup-$(SRC_VERSION)-tiles-win32.zip *
-	rm -rf build-win
-	+$(MAKE) DESTDIR=build-win/stone_soup-$(MAJOR_VERSION) FORCE_SSE=y install
-	cp -p $(ZIP_DOCS) build-win/stone_soup-$(MAJOR_VERSION)/
-	cd build-win && zip -9r ../stone_soup-$(SRC_VERSION)-win32.zip *
-	rm -rf build-win
-	if which advzip >/dev/null;then advzip -z4 stone_soup-$(SRC_VERSION)*-win32.zip;fi
+	if which advzip >/dev/null;then advzip -z3 stone_soup-$(SRC_VERSION)-tiles-win32.zip;fi
+	ln -sf stone_soup-$(SRC_VERSION)-tiles-win32.zip stone_soup-latest-tiles-win32.zip
+
+package-windows-zip-console:
+ifneq ($(GAME),crawl.exe)
+	@echo "This is only for Windows; please specify CROSSHOST.";false
+endif
+	+$(MAKE) DESTDIR=build-win/stone_soup-console-$(MAJOR_VERSION) FORCE_SSE=y install
+	cp -p $(ZIP_DOCS) build-win/stone_soup-console-$(MAJOR_VERSION)/
+	cd build-win && zip -9r ../stone_soup-$(SRC_VERSION)-console-win32.zip *
+	if which advzip >/dev/null;then advzip -z3 stone_soup-$(SRC_VERSION)-console-win32.zip;fi
+	ln -sf stone_soup-$(SRC_VERSION)-console-win32.zip stone_soup-latest-console-win32.zip
 
 #############################################################################
 # Building Mac app bundles
