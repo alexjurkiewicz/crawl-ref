@@ -1,8 +1,11 @@
 name: Build
 
 on:
-  - push
-  - pull_request
+  push: {}
+  pull_request: {}
+  release:
+    types:
+      - created
 
 jobs:
   linting:
@@ -17,7 +20,7 @@ jobs:
         run: util/checkwhite -n
         working-directory: crawl-ref/source
   build_linux:
-    name: "${{ matrix.compiler }} ${{ matrix.build_opts }} ${{ matrix.debug }}"
+    name: Linux ${{ matrix.compiler }} ${{ matrix.build_opts }} ${{ matrix.debug }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -38,8 +41,17 @@ jobs:
             debug: ""
     steps:
       - uses: actions/checkout@v2
-      - name: Set fake version
-        run: echo "1.0.0" > util/release_ver
+      - name: Set version
+        run: |
+          ref="${{ github.ref }}"
+          if [[ $ref = refs/tags/*.*.* ]] ; then
+            ver="${ref##refs/tags/}"
+            echo This is a release build, setting version ${ver}.
+          else
+            ver="1.0.0"
+            echo This is not a release build, setting a fake version 1.0.0.
+          fi
+          echo "$ver" > util/release_ver
         working-directory: crawl-ref/source
       - name: Install dependencies
         run: ./deps.py --compiler ${{ matrix.compiler }} --build-opts "${{ matrix.build_opts }}"
@@ -76,8 +88,13 @@ jobs:
         run: ccache -s
 
   build_macos:
-    name: "clang macOS"
+    name: macOS ${{ matrix.build_type }}
     runs-on: macos-latest
+    strategy:
+      matrix:
+        build_type:
+          - tiles
+          - console
     steps:
       - uses: actions/checkout@v2
       - name: Checkout submodules
@@ -86,8 +103,17 @@ jobs:
           auth_header="$(git config --local --get http.https://github.com/.extraheader)"
           git submodule sync --recursive
           git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-      - name: Set fake version
-        run: echo "1.0.0" > util/release_ver
+      - name: Set version
+        run: |
+          ref="${{ github.ref }}"
+          if [[ $ref = refs/tags/*.*.* ]] ; then
+            ver="${ref##refs/tags/}"
+            echo This is a release build, setting version ${ver}.
+          else
+            ver="1.0.0"
+            echo This is not a release build, setting a fake version 1.0.0.
+          fi
+          echo "$ver" > util/release_ver
         working-directory: crawl-ref/source
       - name: Install Dependencies
         run: |
@@ -100,8 +126,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: $HOME/.ccache
-          key: ccache-macos-clang
+          key: ccache-macos-clang-${{ matrix.build_type }}
           restore-keys: |
+            ccache-macos-clang-${{ matrix.build_type }}
             ccache-macos-clang
       # ccache uses ~110mb to store the output from a single crawl compile
       # (including submodules) (when compressed)
@@ -118,14 +145,35 @@ jobs:
         run: |
           ccache -s
           ls -l /usr/local/opt/ccache/libexec
-      - run: make -j$(sysctl -n hw.ncpu)
+      - run: make -j$(sysctl -n hw.ncpu) mac-app-${{ matrix.build_type }}
         working-directory: crawl-ref/source
       - name: Print ccache stats
         run: ccache -s
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.TRUNK_BUILDS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TRUNK_BUILDS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+      - name: Add build to release
+        if: github.event.release.tag_name != ''
+        # Go back to the upstream action (svenstaro/upload-release-action) once this PR merges:
+        # https://github.com/svenstaro/upload-release-action/pull/13
+        uses: alexjurkiewicz/upload-release-action@6408db765e9a0413e6c5b8231ecd3eb45352cc99
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          file: crawl-ref/source/mac-app-zips/latest.zip
+          asset_name: dcss-${{ github.ref }}-macos-${{ matrix.build_type}}.zip
 
   build_mingw64_crosscompile:
-    name: "gcc mingw64 crosscompile"
+    name: mingw64 ${{ matrix.build_type }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type:
+          - tiles
+          - console
     steps:
       - uses: actions/checkout@v2
       - name: Checkout submodules (for crosscompile)
@@ -134,8 +182,17 @@ jobs:
           auth_header="$(git config --local --get http.https://github.com/.extraheader)"
           git submodule sync --recursive
           git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-      - name: Set fake version
-        run: echo "1.0.0" > util/release_ver
+      - name: Set version
+        run: |
+          ref="${{ github.ref }}"
+          if [[ $ref = refs/tags/*.*.* ]] ; then
+            ver="${ref##refs/tags/}"
+            echo This is a release build, setting version ${ver}.
+          else
+            ver="1.0.0"
+            echo This is not a release build, setting a fake version 1.0.0.
+          fi
+          echo "$ver" > util/release_ver
         working-directory: crawl-ref/source
       - name: Install dependencies
         run: ./deps.py --crosscompile
@@ -146,8 +203,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: $HOME/.ccache
-          key: ccache-mingw64
+          key: ccache-mingw64-${{ matrix.build_type }}
           restore-keys: |
+            ccache-mingw64-${{ matrix.build_type }}
             ccache-mingw64
       # ccache uses ~110mb to store the output from a single crawl compile
       # (including submodules) (when compressed)
@@ -164,17 +222,43 @@ jobs:
         run: |
           ccache -s
           ls -l /usr/lib/ccache
-      - run: make -j$(nproc) CROSSHOST=i686-w64-mingw32 package-windows-zips
+      - run: make -j$(nproc) CROSSHOST=i686-w64-mingw32 package-windows-zip-${{ matrix.build_type }}
         working-directory: crawl-ref/source
       - name: Print ccache stats
         run: ccache -s
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.TRUNK_BUILDS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TRUNK_BUILDS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+      - name: Add build to release
+        if: github.event.release.tag_name != ''
+        # Go back to the upstream action (svenstaro/upload-release-action) once this PR merges:
+        # https://github.com/svenstaro/upload-release-action/pull/13
+        uses: alexjurkiewicz/upload-release-action@6408db765e9a0413e6c5b8231ecd3eb45352cc99
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          file: crawl-ref/source/stone_soup-latest-${{ matrix.build_type}}-win32.zip
+          asset_name: dcss-${{ github.ref }}-win32-${{ matrix.build_type}}.zip
+
   codecov_catch2:
     name: Catch2 (GCC/Linux) + Codecov
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set fake version
-        run: echo "1.0.0" > util/release_ver
+      - name: Set version
+        run: |
+          ref="${{ github.ref }}"
+          if [[ $ref = refs/tags/*.*.* ]] ; then
+            ver="${ref##refs/tags/}"
+            echo This is a release build, setting version ${ver}.
+          else
+            ver="1.0.0"
+            echo This is not a release build, setting a fake version 1.0.0.
+          fi
+          echo "$ver" > util/release_ver
         working-directory: crawl-ref/source
       - name: Install dependencies
         run: ./deps.py --coverage
