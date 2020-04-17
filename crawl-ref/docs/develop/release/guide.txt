@@ -115,8 +115,8 @@ for those the list begins with step 3.
    The Makefile targets are:
 
    * package-windows-installer
-   * package-windows-zip-tiles
-   * package-windows-zip-console
+   * package-windows-tiles
+   * package-windows-console
 
    Unless you're on msys, you need to specify CROSSHOST as well:
 
