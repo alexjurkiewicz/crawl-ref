@@ -1838,6 +1838,7 @@ endif
 	if $(GXX) -dumpmachine|grep -q x86_64; \
 	  then WINARCH=win64; else WINARCH=win32; fi; \
 	makensis -NOCD -DVERSION=$(SRC_VERSION) -DWINARCH="$$WINARCH" util/crawl.nsi
+	ln -sf "stone_soup-$(SRC_VERSION)-$(WINARCH)-installer.exe" stone_soup-latest-$(WINARCH)-installer.exe
 
 build-windows:
 ifneq ($(GAME),crawl.exe)
@@ -1852,7 +1853,7 @@ endif
 	echo $(SRC_VERSION) >build-win/version.txt
 
 ZIP_DOCS=../../LICENSE
-package-windows-zip-tiles:
+package-windows-tiles:
 ifneq ($(GAME),crawl.exe)
 	@echo "This is only for Windows; please specify CROSSHOST.";false
 endif
@@ -1862,7 +1863,7 @@ endif
 	if which advzip >/dev/null;then advzip -z3 stone_soup-$(SRC_VERSION)-tiles-win32.zip;fi
 	ln -sf stone_soup-$(SRC_VERSION)-tiles-win32.zip stone_soup-latest-tiles-win32.zip
 
-package-windows-zip-console:
+package-windows-console:
 ifneq ($(GAME),crawl.exe)
 	@echo "This is only for Windows; please specify CROSSHOST.";false
 endif
